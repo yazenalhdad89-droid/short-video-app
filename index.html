@@ -3,205 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>الملف الشخصي - تطبيق الفيديوهات</title>
+    <title>تطبيق الفيديوهات القصيرة</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #0f0f0f; color: #fff; font-family: sans-serif; padding-bottom: 75px; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: sans-serif; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #222; position: sticky; top: 0; background: #0f0f0f; z-index: 10; }
-        .back-btn, .settings-btn, .share-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
-        
-        .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 15px; text-align: center; }
-        .avatar { width: 90px; height: 90px; border-radius: 50%; background: #222; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 2.5px solid #ff2b54; }
-        .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        .verified { color: #20d5ec; font-size: 15px; }
-        .bio { font-size: 13px; color: #bbb; margin: 8px 20px; line-height: 1.4; }
-
-        .stats { display: flex; justify-content: space-around; width: 90%; margin: 15px 0; background: #181818; padding: 10px; border-radius: 12px; }
-        .stat-item { text-align: center; cursor: pointer; }
-        .stat-value { font-weight: bold; font-size: 16px; }
-        .stat-label { font-size: 11px; color: #aaa; margin-top: 2px; }
-
-        .actions { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
-        .btn-main { background: #ff2b54; border: none; color: #fff; padding: 8px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; }
-        .btn-sec { background: #222; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
-
-        .tabs { display: flex; border-top: 1px solid #222; border-bottom: 1px solid #222; }
-        .tab { flex: 1; text-align: center; padding: 11px; font-size: 13px; color: #888; cursor: pointer; border-bottom: 2px solid transparent; }
-        .tab.active { color: #fff; border-bottom-color: #ff2b54; font-weight: bold; }
-
-        .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #000; }
-        .grid-item { aspect-ratio: 9/16; background: #1a1a1a; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px; font-size: 11px; color: #fff; position: relative; border: 1px solid #222; }
-        .views-count { background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; width: fit-content; font-size: 10px; }
-
-        /* نافذة الإعدادات الشاملة */
-        .settings-modal {
-            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
-            background: #121212; z-index: 100; transition: 0.3s ease-in-out; padding: 20px;
-            overflow-y: auto;
+        .app-container {
+            width: 100%;
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
         }
-        .settings-modal.active { right: 0; }
-        .settings-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; padding-bottom: 15px; margin-bottom: 20px; font-size: 17px; font-weight: bold; }
-        .setting-section { margin-bottom: 22px; }
-        .setting-title { font-size: 13px; color: #ff2b54; margin-bottom: 8px; font-weight: bold; text-transform: uppercase; }
-        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px; cursor: pointer; color: #ddd; }
 
-        /* نافذة الكاميرا ونشر الحالة/الفيديو */
-        .camera-modal {
-            position: fixed; bottom: -100%; left: 0; width: 100%; height: 85vh;
-            background: #181818; border-radius: 20px 20px 0 0; z-index: 200;
-            transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; align-items: center;
+        .video-card {
+            width: 100%;
+            height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .camera-modal.active { bottom: 0; }
-        .camera-preview { width: 100%; height: 60vh; background: #000; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; border: 1px solid #333; }
-        .capture-btn { width: 70px; height: 70px; border-radius: 50%; background: #ff2b54; border: 4px solid #fff; margin-top: 20px; cursor: pointer; }
+
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        .side-actions {
+            position: absolute;
+            right: 15px;
+            bottom: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .action-btn {
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .action-btn.liked { color: #ff2b54; }
+
+        .video-info {
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            right: 80px;
+            color: #fff;
+            z-index: 10;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+
+        .username { font-weight: bold; margin-bottom: 5px; font-size: 16px; cursor: pointer; color: #ff2b54; }
+        .description { font-size: 14px; opacity: 0.9; }
 
         /* شريط التنقل السفلي */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 65px;
-            background: #0f0f0f; border-top: 1px solid #222; display: flex;
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(0,0,0,0.8); border-top: 1px solid #222; display: flex;
             justify-content: space-around; align-items: center; z-index: 50;
         }
-        .nav-item { background: none; border: none; color: #777; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; text-decoration: none; }
+        .nav-item { background: none; border: none; color: #aaa; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; text-decoration: none; }
         .nav-item.active { color: #fff; }
-        .nav-item span:first-child { font-size: 22px; }
-        .nav-add-btn { background: #ff2b54; color: #fff; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; border: none; cursor: pointer; }
+        .nav-item span:first-child { font-size: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <button class="back-btn" onclick="location.href='index.html'">➔</button>
-        <span>الملف الشخصي</span>
-        <div style="display: flex; gap: 12px;">
-            <button class="share-btn" onclick="alert('تم نسخ رابط بروفايلك بنجاح 🔗')">🔗</button>
-            <button class="settings-btn" onclick="openSettings()">⚙️</button>
+    <div class="app-container" id="videoContainer">
+        
+        <!-- الفيديو الأول -->
+        <div class="video-card">
+            <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop playsinline onclick="togglePlay(this)"></video>
+            <div class="side-actions">
+                <button class="action-btn" onclick="toggleLike(this, 1200)">❤️ <span style="font-size:10px" class="count">1.2k</span></button>
+                <button class="action-btn" onclick="alert('فتح نافذة التعليقات')">💬 <span style="font-size:10px">45</span></button>
+                <button class="action-btn" onclick="location.href='profile.html'">👤</button>
+            </div>
+            <div class="video-info">
+                <div class="username" onclick="location.href='profile.html'">@المستخدم_الأول</div>
+                <div class="description">الفيديو الأول يعمل بسلاسة تامة 🚀 (اسحب للأعلى للثاني)</div>
+            </div>
         </div>
+
+        <!-- الفيديو الثاني -->
+        <div class="video-card">
+            <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" loop playsinline onclick="togglePlay(this)"></video>
+            <div class="side-actions">
+                <button class="action-btn" onclick="toggleLike(this, 850)">❤️ <span style="font-size:10px" class="count">850</span></button>
+                <button class="action-btn" onclick="alert('فتح نافذة التعليقات')">💬 <span style="font-size:10px">12</span></button>
+                <button class="action-btn" onclick="location.href='profile.html'">👤</button>
+            </div>
+            <div class="video-info">
+                <div class="username" onclick="location.href='profile.html'">@مصمم_الذكاء</div>
+                <div class="description">الفيديو الثاني: طبيعة ساحرة 🌸</div>
+            </div>
+        </div>
+
+        <!-- الفيديو الثالث -->
+        <div class="video-card">
+            <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop playsinline onclick="togglePlay(this)"></video>
+            <div class="side-actions">
+                <button class="action-btn" onclick="toggleLike(this, 430)">❤️ <span style="font-size:10px" class="count">430</span></button>
+                <button class="action-btn" onclick="alert('فتح نافذة التعليقات')">💬 <span style="font-size:10px">5</span></button>
+                <button class="action-btn" onclick="location.href='profile.html'">👤</button>
+            </div>
+            <div class="video-info">
+                <div class="username" onclick="location.href='profile.html'">@عالم_التطبيقات</div>
+                <div class="description">الفيديو الثالث 🎬 (استمتع بالتطبيق)</div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="profile-info">
-        <div class="avatar">👤</div>
-        <div class="username">@المستخدم_الأول <span class="verified">✓</span></div>
-        <div class="bio">صانع محتوى وفيديوهات قصيرة 🚀<br>تطوير وتصميم تطبيقات الذكاء الاصطناعي</div>
-
-        <div class="stats">
-            <div class="stat-item" onclick="alert('قائمة المتابعة (120)')"><div class="stat-value">120</div><div class="stat-label">متابعة</div></div>
-            <div class="stat-item" onclick="alert('قائمة المتابعين (15.4k)')"><div class="stat-value">15.4k</div><div class="stat-label">متابعون</div></div>
-            <div class="stat-item" onclick="alert('إجمالي الإعجابات (85.2k)')"><div class="stat-value">85.2k</div><div class="stat-label">إعجابات</div></div>
-        </div>
-
-        <div class="actions">
-            <button class="btn-main" id="followBtn" onclick="toggleFollow()">متابعة</button>
-            
-            <!-- أزرار التطبيقات لتفتح تطبيق الواتساب أو التيليجرام مباشرة على الهاتف -->
-            <a href="https://wa.me/?text=مرحباً، شاهدت تطبيق الفيديوهات الخاص بك وأعجبني جداً!" target="_blank" class="btn-sec">💬 واتساب</a>
-            <a href="https://t.me/share/url?url=https://yazenalhdad89-droid.github.io/short-video-app/&text=تطبيق الفيديوهات القصيرة" target="_blank" class="btn-sec">✈️ تيليجرام</a>
-            <a href="https://www.instagram.com/" target="_blank" class="btn-sec">📷 انستغرام</a>
-        </div>
-    </div>
-
-    <div class="tabs">
-        <div class="tab active">الفيديوهات (3)</div>
-        <div class="tab" onclick="alert('الفيديوهات المعجب بها فارغة حالياً')">المعجب بها ❤️</div>
-        <div class="tab" onclick="alert('سجل المشاهدات فارغ')">المشاهدات 👁️</div>
-    </div>
-
-    <div class="video-grid">
-        <div class="grid-item"><div class="views-count">👁️ 1.2K</div></div>
-        <div class="grid-item"><div class="views-count">👁️ 3.4K</div></div>
-        <div class="grid-item"><div class="views-count">👁️ 850</div></div>
-    </div>
-
-    <!-- نافذة الإعدادات الشاملة -->
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-header">
-            <span>الإعدادات والخصوصية</span>
-            <button onclick="closeSettings()" style="background:none; border:none; color:#fff; font-size:22px;">✕</button>
-        </div>
-
-        <div class="setting-section">
-            <div class="setting-title">إدارة الحساب والربط</div>
-            <div class="setting-item" onclick="prompt('أدخل رقم الهاتف للربط:')">📱 ربط رقم الهاتف</div>
-            <div class="setting-item" onclick="prompt('أدخل البريد الإلكتروني:')">📧 ربط البريد الإلكتروني</div>
-            <div class="setting-item" onclick="alert('تم الربط بحساب جوجل بنجاح ✅')">🌐 ربط حساب Google</div>
-        </div>
-
-        <div class="setting-section">
-            <div class="setting-title">الخصوصية والأمان</div>
-            <div class="setting-item" onclick="alert('تم تغيير خصوصية الحساب إلى (خاص 🔒)')">🔒 خصوصية الحساب (عام / خاص)</div>
-            <div class="setting-item" onclick="alert('وضع تقييد المحتوى والمراهقين مفعل ⏳')">⏳ وضع تقييد المحتوى ووقت الشاشة</div>
-            <div class="setting-item" onclick="alert('تم حظر الحسابات المحددة بنجاح')">🚫 قائمة الحظر والحسابات المحظورة</div>
-            <div class="setting-item" onclick="alert('تم إرسال طلب البلاغ بنجاح للإدارة')">⚠️ الإبلاغ عن مشكلة</div>
-        </div>
-
-        <div class="setting-section">
-            <div class="setting-title">التحقق والأرباح</div>
-            <div class="setting-item" onclick="alert('حالة التحقق: موثق بالعلامة الزرقاء ✓')">🛡️ التحقق من الهوية (العلامة الزرقاء)</div>
-            <div class="setting-item" onclick="alert('صندوق المبدعين والأرباح نشط 💰')">💰 صندوق المبدعين والربح (Creator Fund)</div>
-        </div>
-    </div>
-
-    <!-- نافذة الكاميرا ونشر الحالة/الفيديو -->
-    <div class="camera-modal" id="cameraModal">
-        <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px;">
-            <span style="font-weight: bold; font-size: 16px;">تصوير ونشر حالة أو فيديو 🎥</span>
-            <button onclick="closeCamera()" style="background:none; border:none; color:#fff; font-size:20px;">✕</button>
-        </div>
-        <div class="camera-preview">
-            <span style="color: #777; font-size: 14px;">الكاميرا جاهزة للتصوير أو الرفع من الاستوديو 📱</span>
-        </div>
-        <button class="capture-btn" onclick="alert('تم بدء تسجيل وتصوير الفيديو بنجاح! 🚀')"></button>
-    </div>
-
-    <!-- شريط التنقل السفلي المتكامل -->
+    <!-- شريط التنقل السفلي -->
     <div class="bottom-nav">
-        <button class="nav-item" onclick="location.href='index.html'">
+        <button class="nav-item active" onclick="location.href='index.html'">
             <span>🏠</span>
             <span>الرئيسية</span>
         </button>
-        <button class="nav-item" onclick="alert('قسم الاكسبلور والبحث نشط 🧭')">
+        <button class="nav-item" onclick="alert('الاكسبلور مفعل 🧭')">
             <span>🧭</span>
             <span>الاكسبلور</span>
         </button>
-        <button class="nav-item" onclick="openCamera()">
-            <div class="nav-add-btn">➕</div>
+        <button class="nav-item" onclick="location.href='profile.html'">
+            <span>➕</span>
+            <span>نشر</span>
         </button>
         <button class="nav-item" onclick="alert('لا توجد رسائل جديدة ✉️')">
             <span>✉️</span>
             <span>الرسائل</span>
         </button>
-        <button class="nav-item" onclick="openSettings()">
-            <span>⚙️</span>
-            <span>الإعدادات</span>
+        <button class="nav-item" onclick="location.href='profile.html'">
+            <span>👤</span>
+            <span>الملف الشخصي</span>
         </button>
     </div>
 
     <script>
-        function toggleFollow() {
-            const btn = document.getElementById('followBtn');
-            if (btn.innerText === "متابعة") {
-                btn.innerText = "تمت المتابعة";
-                btn.style.background = "#333";
+        // تشغيل الفيديو الذي يظهر على الشاشة تلقائياً وإيقاف البقية
+        const observerOptions = { root: null, threshold: 0.6 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target.querySelector('video');
+                if (entry.isIntersecting) {
+                    video.play().catch(e => console.log(e));
+                } else {
+                    video.pause();
+                    video.currentTime = 0;
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.video-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        function togglePlay(video) {
+            if (video.paused) { video.play(); } else { video.pause(); }
+        }
+
+        function toggleLike(btn, count) {
+            const countSpan = btn.querySelector('.count');
+            if (btn.classList.contains('liked')) {
+                btn.classList.remove('liked');
+                countSpan.innerText = count;
             } else {
-                btn.innerText = "متابعة";
-                btn.style.background = "#ff2b54";
+                btn.classList.add('liked');
+                countSpan.innerText = count + 1;
             }
-        }
-
-        function openSettings() {
-            document.getElementById('settingsModal').classList.add('active');
-        }
-
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.remove('active');
-        }
-
-        function openCamera() {
-            document.getElementById('cameraModal').classList.add('active');
-        }
-
-        function closeCamera() {
-            document.getElementById('cameraModal').classList.remove('active');
         }
     </script>
 </body>
