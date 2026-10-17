@@ -12,7 +12,7 @@
         .back-btn, .settings-btn, .share-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
         
         .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 15px; text-align: center; }
-        .avatar { width: 90px; height: 90px; border-radius: 50%; background: #222; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 2.5px solid #ff2b54; position: relative; }
+        .avatar { width: 90px; height: 90px; border-radius: 50%; background: #222; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 2.5px solid #ff2b54; }
         .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         .verified { color: #20d5ec; font-size: 15px; }
         .bio { font-size: 13px; color: #bbb; margin: 8px 20px; line-height: 1.4; }
@@ -23,8 +23,8 @@
         .stat-label { font-size: 11px; color: #aaa; margin-top: 2px; }
 
         .actions { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
-        .btn-main { background: #ff2b54; border: none; color: #fff; padding: 8px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; }
-        .btn-sec { background: #222; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; }
+        .btn-main { background: #ff2b54; border: none; color: #fff; padding: 8px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; }
+        .btn-sec { background: #222; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
 
         .tabs { display: flex; border-top: 1px solid #222; border-bottom: 1px solid #222; }
         .tab { flex: 1; text-align: center; padding: 11px; font-size: 13px; color: #888; cursor: pointer; border-bottom: 2px solid transparent; }
@@ -34,7 +34,7 @@
         .grid-item { aspect-ratio: 9/16; background: #1a1a1a; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px; font-size: 11px; color: #fff; position: relative; border: 1px solid #222; }
         .views-count { background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; width: fit-content; font-size: 10px; }
 
-        /* نافذة الإعدادات الشاملة (قائمة جانبية) */
+        /* نافذة الإعدادات الشاملة */
         .settings-modal {
             position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
             background: #121212; z-index: 100; transition: 0.3s ease-in-out; padding: 20px;
@@ -46,7 +46,7 @@
         .setting-title { font-size: 13px; color: #ff2b54; margin-bottom: 8px; font-weight: bold; text-transform: uppercase; }
         .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px; cursor: pointer; color: #ddd; }
 
-        /* نافذة الكاميرا ونشر الحالات/الفيديوهات */
+        /* نافذة الكاميرا ونشر الحالة/الفيديو */
         .camera-modal {
             position: fixed; bottom: -100%; left: 0; width: 100%; height: 85vh;
             background: #181818; border-radius: 20px 20px 0 0; z-index: 200;
@@ -62,7 +62,7 @@
             background: #0f0f0f; border-top: 1px solid #222; display: flex;
             justify-content: space-around; align-items: center; z-index: 50;
         }
-        .nav-item { background: none; border: none; color: #777; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+        .nav-item { background: none; border: none; color: #777; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; text-decoration: none; }
         .nav-item.active { color: #fff; }
         .nav-item span:first-child { font-size: 22px; }
         .nav-add-btn { background: #ff2b54; color: #fff; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; border: none; cursor: pointer; }
@@ -92,9 +92,11 @@
 
         <div class="actions">
             <button class="btn-main" id="followBtn" onclick="toggleFollow()">متابعة</button>
-            <button class="btn-sec" onclick="alert('تم ربط حساب انستغرام 📷')">انستغرام</button>
-            <button class="btn-sec" onclick="alert('تم ربط واتساب 💬')">واتساب</button>
-            <button class="btn-sec" onclick="alert('تم ربط يوتيوب 🔴')">يوتيوب</button>
+            
+            <!-- أزرار التطبيقات لتفتح تطبيق الواتساب أو التيليجرام مباشرة على الهاتف -->
+            <a href="https://wa.me/?text=مرحباً، شاهدت تطبيق الفيديوهات الخاص بك وأعجبني جداً!" target="_blank" class="btn-sec">💬 واتساب</a>
+            <a href="https://t.me/share/url?url=https://yazenalhdad89-droid.github.io/short-video-app/&text=تطبيق الفيديوهات القصيرة" target="_blank" class="btn-sec">✈️ تيليجرام</a>
+            <a href="https://www.instagram.com/" target="_blank" class="btn-sec">📷 انستغرام</a>
         </div>
     </div>
 
@@ -110,7 +112,7 @@
         <div class="grid-item"><div class="views-count">👁️ 850</div></div>
     </div>
 
-    <!-- نافذة الإعدادات الشاملة (الحساب، الحظر، الأمان، والربط) -->
+    <!-- نافذة الإعدادات الشاملة -->
     <div class="settings-modal" id="settingsModal">
         <div class="settings-header">
             <span>الإعدادات والخصوصية</span>
@@ -168,7 +170,7 @@
             <span>✉️</span>
             <span>الرسائل</span>
         </button>
-        <button class="nav-item active" onclick="openSettings()">
+        <button class="nav-item" onclick="openSettings()">
             <span>⚙️</span>
             <span>الإعدادات</span>
         </button>
