@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -9,25 +9,29 @@
         body { background-color: #121212; color: #fff; font-family: sans-serif; padding-bottom: 20px; }
         
         .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #222; }
-        .back-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
+        .back-btn { background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; }
         
         .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 20px; text-align: center; }
-        .avatar { width: 90px; height: 90px; border-radius: 50%; background: #333; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-size: 35px; border: 2px solid #ff2b54; }
-        .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .avatar { width: 90px; height: 90px; border-radius: 50%; background: #333; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 2px solid #ff2b54; }
+        .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; margin-top: 5px; }
         .verified { color: #20d5ec; font-size: 16px; }
-        .bio { font-size: 13px; color: #aaa; margin: 8px 20px; }
+        .bio { font-size: 13px; color: #aaa; margin: 8px 20px; line-height: 1.4; }
 
-        .stats { display: flex; justify-content: space-around; width: 80%; margin: 20px 0; }
+        .stats { display: flex; justify-content: space-around; width: 85%; margin: 20px 0; }
         .stat-item { text-align: center; }
-        .stat-value { font-weight: bold; font-size: 16px; }
-        .stat-label { font-size: 12px; color: #aaa; }
+        .stat-value { font-weight: bold; font-size: 17px; }
+        .stat-label { font-size: 12px; color: #aaa; margin-top: 2px; }
 
-        .actions { display: flex; gap: 10px; margin-bottom: 20px; }
-        .btn-follow { background: #ff2b54; border: none; color: #fff; padding: 8px 30px; border-radius: 20px; font-weight: bold; cursor: pointer; }
-        .btn-social { background: #222; border: 1px solid #333; color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 12px; }
+        .actions { display: flex; gap: 10px; margin-bottom: 25px; }
+        .btn-follow { background: #ff2b54; border: none; color: #fff; padding: 8px 35px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .btn-social { background: #222; border: 1px solid #333; color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+
+        .tabs { display: flex; border-top: 1px solid #222; border-bottom: 1px solid #222; }
+        .tab { flex: 1; text-align: center; padding: 12px; font-size: 14px; color: #aaa; cursor: pointer; border-bottom: 2px solid transparent; }
+        .tab.active { color: #fff; border-bottom-color: #fff; font-weight: bold; }
 
         .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #000; }
-        .grid-item { aspect-ratio: 9/16; background: #222; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; }
+        .grid-item { aspect-ratio: 9/16; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #777; border: 1px solid #222; }
     </style>
 </head>
 <body>
@@ -41,7 +45,7 @@
     <div class="profile-info">
         <div class="avatar">👤</div>
         <div class="username">@المستخدم_الأول <span class="verified">✓</span></div>
-        <div class="bio">صانع محتوى ذكاء اصطناعي وفيديوهات قصيرة 🚀</div>
+        <div class="bio">صانع محتوى ذكاء اصطناعي وفيديوهات قصيرة 🚀<br>تطوير تطبيقات الأندرويد خطوة بخطوة</div>
 
         <div class="stats">
             <div class="stat-item"><div class="stat-value">120</div><div class="stat-label">متابعة</div></div>
@@ -51,14 +55,19 @@
 
         <div class="actions">
             <button class="btn-follow" id="followBtn" onclick="toggleFollow()">متابعة</button>
-            <button class="btn-social">انستغرام 📷</button>
+            <button class="btn-social" onclick="alert('تم ربط حساب انستغرام بنجاح!')">انستغرام 📷</button>
         </div>
     </div>
 
+    <div class="tabs">
+        <div class="tab active">الفيديوهات (3)</div>
+        <div class="tab">المعجب بها ❤️</div>
+    </div>
+
     <div class="video-grid">
-        <div class="grid-item">فيديو 1</div>
-        <div class="grid-item">فيديو 2</div>
-        <div class="grid-item">فيديو 3</div>
+        <div class="grid-item">فيديو 1 🎬</div>
+        <div class="grid-item">فيديو 2 🎬</div>
+        <div class="grid-item">فيديو 3 🎬</div>
     </div>
 
     <script>
@@ -76,3 +85,4 @@
 
 </body>
 </html>
+               
