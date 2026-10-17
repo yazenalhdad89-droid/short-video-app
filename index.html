@@ -1,37 +1,60 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>الملف الشخصي</title>
+    <title>الملف الشخصي والحقيبة الاحترافية</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #121212; color: #fff; font-family: sans-serif; padding-bottom: 20px; }
+        body { background-color: #121212; color: #fff; font-family: sans-serif; padding-bottom: 70px; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #222; }
-        .back-btn { background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #222; position: sticky; top: 0; background: #121212; z-index: 10; }
+        .back-btn, .settings-btn, .share-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
         
-        .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 20px; text-align: center; }
-        .avatar { width: 90px; height: 90px; border-radius: 50%; background: #333; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 2px solid #ff2b54; }
-        .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; margin-top: 5px; }
-        .verified { color: #20d5ec; font-size: 16px; }
-        .bio { font-size: 13px; color: #aaa; margin: 8px 20px; line-height: 1.4; }
+        .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 15px; text-align: center; }
+        .avatar { width: 85px; height: 85px; border-radius: 50%; background: #333; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 38px; border: 2px solid #ff2b54; }
+        .username { font-size: 17px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .verified { color: #20d5ec; font-size: 15px; }
+        .bio { font-size: 13px; color: #aaa; margin: 6px 20px; line-height: 1.4; }
 
-        .stats { display: flex; justify-content: space-around; width: 85%; margin: 20px 0; }
+        .stats { display: flex; justify-content: space-around; width: 85%; margin: 15px 0; }
         .stat-item { text-align: center; }
-        .stat-value { font-weight: bold; font-size: 17px; }
-        .stat-label { font-size: 12px; color: #aaa; margin-top: 2px; }
+        .stat-value { font-weight: bold; font-size: 16px; }
+        .stat-label { font-size: 11px; color: #aaa; }
 
-        .actions { display: flex; gap: 10px; margin-bottom: 25px; }
-        .btn-follow { background: #ff2b54; border: none; color: #fff; padding: 8px 35px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 14px; }
-        .btn-social { background: #222; border: 1px solid #333; color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+        .actions { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn-follow { background: #ff2b54; border: none; color: #fff; padding: 7px 30px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .btn-social { background: #222; border: 1px solid #333; color: #fff; padding: 7px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; }
 
         .tabs { display: flex; border-top: 1px solid #222; border-bottom: 1px solid #222; }
-        .tab { flex: 1; text-align: center; padding: 12px; font-size: 14px; color: #aaa; cursor: pointer; border-bottom: 2px solid transparent; }
+        .tab { flex: 1; text-align: center; padding: 10px; font-size: 13px; color: #aaa; cursor: pointer; border-bottom: 2px solid transparent; }
         .tab.active { color: #fff; border-bottom-color: #fff; font-weight: bold; }
 
         .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #000; }
-        .grid-item { aspect-ratio: 9/16; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #777; border: 1px solid #222; }
+        .grid-item { aspect-ratio: 9/16; background: #1a1a1a; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px; font-size: 11px; color: #fff; position: relative; border: 1px solid #222; }
+        .views-count { background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; width: fit-content; font-size: 10px; }
+
+        /* نافذة الإعدادات والخصوصية */
+        .settings-modal {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
+            background: #121212; z-index: 100; transition: 0.3s ease-in-out; padding: 20px;
+            overflow-y: auto;
+        }
+        .settings-modal.active { right: 0; }
+        .settings-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; padding-bottom: 15px; margin-bottom: 20px; font-size: 18px; font-weight: bold; }
+        .setting-section { margin-bottom: 25px; }
+        .setting-title { font-size: 14px; color: #ff2b54; margin-bottom: 10px; font-weight: bold; }
+        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #222; font-size: 14px; cursor: pointer; }
+
+        /* شريط التنقل السفلي */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+            background: #000; border-top: 1px solid #222; display: flex;
+            justify-content: space-around; align-items: center; z-index: 50;
+        }
+        .nav-item { background: none; border: none; color: #777; font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+        .nav-item.active { color: #fff; }
+        .nav-item span:first-child { font-size: 20px; }
     </style>
 </head>
 <body>
@@ -39,7 +62,10 @@
     <div class="header">
         <button class="back-btn" onclick="location.href='index.html'">➔</button>
         <span>الملف الشخصي</span>
-        <span>⚙️</span>
+        <div style="display: flex; gap: 10px;">
+            <button class="share-btn" onclick="alert('تم نسخ رابط البروفايل بنجاح 🔗')">🔗</button>
+            <button class="settings-btn" onclick="openSettings()">⚙️</button>
+        </div>
     </div>
 
     <div class="profile-info">
@@ -61,13 +87,70 @@
 
     <div class="tabs">
         <div class="tab active">الفيديوهات (3)</div>
-        <div class="tab">المعجب بها ❤️</div>
+        <div class="tab" onclick="alert('لا توجد فيديوهات معجب بها حالياً')">المعجب بها ❤️</div>
     </div>
 
     <div class="video-grid">
-        <div class="grid-item">فيديو 1 🎬</div>
-        <div class="grid-item">فيديو 2 🎬</div>
-        <div class="grid-item">فيديو 3 🎬</div>
+        <div class="grid-item">
+            <div class="views-count">👁️ 1.2K</div>
+        </div>
+        <div class="grid-item">
+            <div class="views-count">👁️ 3.4K</div>
+        </div>
+        <div class="grid-item">
+            <div class="views-count">👁️ 850</div>
+        </div>
+    </div>
+
+    <!-- قائمة الإعدادات الشاملة والخصوصية -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-header">
+            <span>الإعدادات والخصوصية</span>
+            <button onclick="closeSettings()" style="background:none; border:none; color:#fff; font-size:20px;">✕</button>
+        </div>
+
+        <div class="setting-section">
+            <div class="setting-title">الحساب والأمان</div>
+            <div class="setting-item" onclick="alert('خصوصية الحساب: عام 🌐')">خصوصية الحساب (عام / خاص) 🔒</div>
+            <div class="setting-item" onclick="alert('مركز الأمان ووضع المراهقين مفعل ✅')">وضع المراهقين وقت الشاشة ⏳</div>
+            <div class="setting-item" onclick="alert('قائمة الكلمات المفتاحية المحظورة نشطة')">كلمات مفتاحية محظورة 🚫</div>
+        </div>
+
+        <div class="setting-section">
+            <div class="setting-title">الحق والربح والبرنامج</div>
+            <div class="setting-item" onclick="alert('حالة التحقق: موثق بالعلامة الزرقاء ✓')">التحقق من الهوية (العلامة الزرقاء) 🛡️</div>
+            <div class="setting-item" onclick="alert('صندوق المبدعين والأرباح: قيد التفعيل 💰')">صندوق المبدعين والربح (Creator Fund) 💵</div>
+            <div class="setting-item" onclick="alert('إصدار التطبيق: النسخة الاحترافية 1.0.0')">حقوق النشر وحق البرنامج (About) ℹ️</div>
+        </div>
+
+        <div class="setting-section">
+            <div class="setting-title">الدعم والمساعدة</div>
+            <div class="setting-item" onclick="alert('تم إرسال بلاغك بنجاح للإدارة')">الإبلاغ عن مشكلة أو حظر ⚠️</div>
+        </div>
+    </div>
+
+    <!-- شريط التنقل السفلي -->
+    <div class="bottom-nav">
+        <button class="nav-item" onclick="location.href='index.html'">
+            <span>🏠</span>
+            <span>الرئيسية</span>
+        </button>
+        <button class="nav-item" onclick="alert('قسم الاكسبلور والاكتشاف قيد التشغيل 🧭')">
+            <span>🧭</span>
+            <span>الاكسبلور</span>
+        </button>
+        <button class="nav-item" onclick="alert('شاشة رفع الفيديو والتصوير قادمة في التحديث القادم ➕')">
+            <span>➕</span>
+            <span>نشر</span>
+        </button>
+        <button class="nav-item" onclick="alert('لا توجد رسائل جديدة ✉️')">
+            <span>✉️</span>
+            <span>الرسائل</span>
+        </button>
+        <button class="nav-item active">
+            <span>👤</span>
+            <span>الملف الشخصي</span>
+        </button>
     </div>
 
     <script>
@@ -81,8 +164,14 @@
                 btn.style.background = "#ff2b54";
             }
         }
-    </script>
 
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+    </script>
 </body>
 </html>
-               
