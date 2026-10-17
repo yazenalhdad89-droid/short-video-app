@@ -3,188 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تطبيق الفيديوهات القصيرة</title>
+    <title>الملف الشخصي</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: sans-serif; }
+        body { background-color: #0f0f0f; color: #fff; font-family: sans-serif; padding-bottom: 75px; }
         
-        .app-container {
-            width: 100%;
-            height: 100vh;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            scroll-behavior: smooth;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #222; position: sticky; top: 0; background: #0f0f0f; z-index: 10; }
+        .back-btn { background: #ff2b54; border: none; color: #fff; padding: 6px 15px; border-radius: 15px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        
+        .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 15px; text-align: center; }
+        .avatar { width: 90px; height: 90px; border-radius: 50%; background: #222; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 2.5px solid #ff2b54; }
+        .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .verified { color: #20d5ec; font-size: 15px; }
+        .bio { font-size: 13px; color: #bbb; margin: 8px 20px; line-height: 1.4; }
 
-        .video-card {
-            width: 100%;
-            height: 100vh;
-            scroll-snap-align: start;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        .actions { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
+        .btn-sec { background: #222; border: 1px solid #333; color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; text-decoration: none; }
 
-        video { width: 100%; height: 100%; object-fit: cover; }
-
-        .side-actions {
-            position: absolute;
-            right: 15px;
-            bottom: 80px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            align-items: center;
-            z-index: 10;
-        }
-
-        .action-btn {
-            background: rgba(0,0,0,0.5);
-            border: none;
-            color: #fff;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .action-btn.liked { color: #ff2b54; }
-
-        .video-info {
-            position: absolute;
-            bottom: 20px;
-            left: 15px;
-            right: 80px;
-            color: #fff;
-            z-index: 10;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-        }
-
-        .username { font-weight: bold; margin-bottom: 5px; font-size: 16px; cursor: pointer; color: #ff2b54; }
-        .description { font-size: 14px; opacity: 0.9; }
-
-        /* شريط التنقل السفلي */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
-            background: rgba(0,0,0,0.8); border-top: 1px solid #222; display: flex;
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 65px;
+            background: #0f0f0f; border-top: 1px solid #222; display: flex;
             justify-content: space-around; align-items: center; z-index: 50;
         }
-        .nav-item { background: none; border: none; color: #aaa; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; text-decoration: none; }
+        .nav-item { background: none; border: none; color: #777; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; text-decoration: none; }
         .nav-item.active { color: #fff; }
-        .nav-item span:first-child { font-size: 20px; }
+        .nav-item span:first-child { font-size: 22px; }
     </style>
 </head>
 <body>
 
-    <div class="app-container" id="videoContainer">
-        
-        <!-- الفيديو الأول -->
-        <div class="video-card">
-            <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop playsinline onclick="togglePlay(this)"></video>
-            <div class="side-actions">
-                <button class="action-btn" onclick="toggleLike(this, 1200)">❤️ <span style="font-size:10px" class="count">1.2k</span></button>
-                <button class="action-btn" onclick="alert('فتح نافذة التعليقات')">💬 <span style="font-size:10px">45</span></button>
-                <button class="action-btn" onclick="location.href='profile.html'">👤</button>
-            </div>
-            <div class="video-info">
-                <div class="username" onclick="location.href='profile.html'">@المستخدم_الأول</div>
-                <div class="description">الفيديو الأول يعمل بسلاسة تامة 🚀 (اسحب للأعلى للثاني)</div>
-            </div>
-        </div>
-
-        <!-- الفيديو الثاني -->
-        <div class="video-card">
-            <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" loop playsinline onclick="togglePlay(this)"></video>
-            <div class="side-actions">
-                <button class="action-btn" onclick="toggleLike(this, 850)">❤️ <span style="font-size:10px" class="count">850</span></button>
-                <button class="action-btn" onclick="alert('فتح نافذة التعليقات')">💬 <span style="font-size:10px">12</span></button>
-                <button class="action-btn" onclick="location.href='profile.html'">👤</button>
-            </div>
-            <div class="video-info">
-                <div class="username" onclick="location.href='profile.html'">@مصمم_الذكاء</div>
-                <div class="description">الفيديو الثاني: طبيعة ساحرة 🌸</div>
-            </div>
-        </div>
-
-        <!-- الفيديو الثالث -->
-        <div class="video-card">
-            <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop playsinline onclick="togglePlay(this)"></video>
-            <div class="side-actions">
-                <button class="action-btn" onclick="toggleLike(this, 430)">❤️ <span style="font-size:10px" class="count">430</span></button>
-                <button class="action-btn" onclick="alert('فتح نافذة التعليقات')">💬 <span style="font-size:10px">5</span></button>
-                <button class="action-btn" onclick="location.href='profile.html'">👤</button>
-            </div>
-            <div class="video-info">
-                <div class="username" onclick="location.href='profile.html'">@عالم_التطبيقات</div>
-                <div class="description">الفيديو الثالث 🎬 (استمتع بالتطبيق)</div>
-            </div>
-        </div>
-
+    <div class="header">
+        <button class="back-btn" onclick="location.href='index.html'">العودة للرئيسية ➔</button>
+        <span>الملف الشخصي</span>
+        <span>⚙️</span>
     </div>
 
-    <!-- شريط التنقل السفلي -->
+    <div class="profile-info">
+        <div class="avatar">👤</div>
+        <div class="username">@المستخدم_الأول <span class="verified">✓</span></div>
+        <div class="bio">تطبيق الفيديوهات القصيرة 🚀</div>
+
+        <div class="actions">
+            <a href="https://wa.me/" target="_blank" class="btn-sec">💬 واتساب</a>
+            <a href="https://t.me/" target="_blank" class="btn-sec">✈️ تيليجرام</a>
+        </div>
+    </div>
+
+    <!-- شريط التنقل للرجوع السريع -->
     <div class="bottom-nav">
         <button class="nav-item active" onclick="location.href='index.html'">
             <span>🏠</span>
-            <span>الرئيسية</span>
-        </button>
-        <button class="nav-item" onclick="alert('الاكسبلور مفعل 🧭')">
-            <span>🧭</span>
-            <span>الاكسبلور</span>
-        </button>
-        <button class="nav-item" onclick="location.href='profile.html'">
-            <span>➕</span>
-            <span>نشر</span>
-        </button>
-        <button class="nav-item" onclick="alert('لا توجد رسائل جديدة ✉️')">
-            <span>✉️</span>
-            <span>الرسائل</span>
-        </button>
-        <button class="nav-item" onclick="location.href='profile.html'">
-            <span>👤</span>
-            <span>الملف الشخصي</span>
+            <span>الرئيسية (رجوع)</span>
         </button>
     </div>
 
-    <script>
-        // تشغيل الفيديو الذي يظهر على الشاشة تلقائياً وإيقاف البقية
-        const observerOptions = { root: null, threshold: 0.6 };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                const video = entry.target.querySelector('video');
-                if (entry.isIntersecting) {
-                    video.play().catch(e => console.log(e));
-                } else {
-                    video.pause();
-                    video.currentTime = 0;
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.video-card').forEach(card => {
-            observer.observe(card);
-        });
-
-        function togglePlay(video) {
-            if (video.paused) { video.play(); } else { video.pause(); }
-        }
-
-        function toggleLike(btn, count) {
-            const countSpan = btn.querySelector('.count');
-            if (btn.classList.contains('liked')) {
-                btn.classList.remove('liked');
-                countSpan.innerText = count;
-            } else {
-                btn.classList.add('liked');
-                countSpan.innerText = count + 1;
-            }
-        }
-    </script>
 </body>
 </html>
