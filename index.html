@@ -12,10 +12,29 @@
         .back-btn, .settings-btn, .share-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
         
         .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 15px; text-align: center; }
-        .avatar { width: 90px; height: 90px; border-radius: 50%; background: #222; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 2.5px solid #ff2b54; }
-        .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        
+        /* مواصفات الصورة: دائرية بمقاس 640x640 مع يدعم الرمادي الافتراضي */
+        .avatar-container { position: relative; display: inline-block; margin-bottom: 8px; }
+        .avatar { 
+            width: 90px; height: 90px; border-radius: 50%; 
+            background: #666666; /* لون رمادي افتراضي */
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 40px; border: 2.5px solid #ff2b54; 
+            overflow: hidden; cursor: pointer; color: #fff;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .avatar-controls { display: flex; gap: 6px; margin-bottom: 10px; }
+        .avatar-btn { background: #222; border: 1px solid #444; color: #ccc; font-size: 11px; padding: 3px 8px; border-radius: 12px; cursor: pointer; }
+        .avatar-btn-delete { background: #331111; border: 1px solid #772222; color: #ff6666; }
+
+        .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; }
         .verified { color: #20d5ec; font-size: 15px; }
-        .bio { font-size: 13px; color: #bbb; margin: 8px 20px; line-height: 1.4; }
+        
+        /* النبذة والخيارات السريعة */
+        .bio { font-size: 13px; color: #bbb; margin: 6px 20px 4px 20px; line-height: 1.4; cursor: pointer; word-break: break-word; }
+        .status-presets { display: flex; gap: 8px; margin-bottom: 10px; }
+        .status-chip { background: #181818; border: 1px solid #333; color: #aaa; font-size: 11px; padding: 2px 10px; border-radius: 10px; cursor: pointer; }
 
         .stats { display: flex; justify-content: space-around; width: 90%; margin: 15px 0; background: #181818; padding: 10px; border-radius: 12px; }
         .stat-item { text-align: center; cursor: pointer; }
@@ -36,7 +55,7 @@
         .grid-item video { width: 100%; height: 100%; object-fit: cover; }
         .views-count { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; font-size: 10px; z-index: 2; pointer-events: none; }
 
-        /* نافذة مشغل الفيديو المستقيم عمودياً طولي */
+        /* نافذة مشغل الفيديو العمودي المستقيم مع أزرار التحكم والتدوير */
         .custom-video-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 300; display: none;
@@ -44,7 +63,6 @@
         }
         .custom-video-modal.active { display: flex; }
 
-        /* الحاوية المثبتة بشكل طولي مستقيم 9:16 */
         .video-wrapper {
             position: relative;
             width: 100%;
@@ -118,9 +136,33 @@
     </div>
 
     <div class="profile-info">
-        <div class="avatar">👤</div>
-        <div class="username">@المستخدم_الأول <span class="verified">✓</span></div>
-        <div class="bio">صانع محتوى وفيديوهات قصيرة 🚀<br>تطوير وتصميم تطبيقات الذكاء الاصطناعي</div>
+        <!-- الصورة: دائرية، مع دعم المقاس، خيار الرفع وخيار الإرجاع إلى رمادي افتراضي -->
+        <div class="avatar-container">
+            <div class="avatar" id="avatarDisplay" onclick="triggerImageUpload()">
+                <span id="avatarIcon">👤</span>
+            </div>
+        </div>
+        <div class="avatar-controls">
+            <button class="avatar-btn" onclick="triggerImageUpload()">📷 تغيير الصورة</button>
+            <button class="avatar-btn avatar-btn-delete" onclick="resetAvatarToDefault()">🗑️ حذف وترجيع رمادي</button>
+        </div>
+        <input type="file" id="imageInput" accept="image/png, image/jpeg" style="display: none;" onchange="handleImageUpload(event)">
+
+        <!-- الاسم: من 1 إلى 25 حرف (عربي، انجليزي، ايموجي) -->
+        <div class="username" id="usernameDisplay" onclick="editUsername()" title="انقر لتعديل الاسم">
+            <span id="usernameText">@المستخدم_الأول</span> <span class="verified">✓</span>
+        </div>
+
+        <!-- النبذة: من 0 إلى 139 حرف -->
+        <div class="bio" id="bioDisplay" onclick="editBio()" title="انقر لتعديل النبذة">
+            <span id="bioText">صانع محتوى وفيديوهات قصيرة 🚀<br>تطوير وتصميم تطبيقات الذكاء الاصطناعي</span>
+        </div>
+
+        <!-- أزرار سريعة للنبذة (متاح / مشغول) -->
+        <div class="status-presets">
+            <button class="status-chip" onclick="setPresetStatus('متاح 🟢')">🟢 متاح</button>
+            <button class="status-chip" onclick="setPresetStatus('مشغول 🔴')">🔴 مشغول</button>
+        </div>
 
         <div class="stats">
             <div class="stat-item" onclick="alert('قائمة المتابعة (120)')"><div class="stat-value">120</div><div class="stat-label">متابعة</div></div>
@@ -267,7 +309,7 @@
             const modal = document.getElementById('customVideoModal');
             const video = document.getElementById('modalVideoPlayer');
             video.src = src;
-            currentRotation = 0; // يفتح مستقيم تماماً دائماً
+            currentRotation = 0;
             video.style.transform = `rotate(0deg)`;
             modal.classList.add('active');
             video.play();
@@ -285,6 +327,95 @@
             const video = document.getElementById('modalVideoPlayer');
             currentRotation = (currentRotation + 90) % 360;
             video.style.transform = `rotate(${currentRotation}deg)`;
+        }
+
+        /* --- البرمجيات الخاصة بمواصفات الملف الشخصي المضافة --- */
+
+        // 1. التحكم بالصورة (640x640 / أقل من 2 ميجا / JPG-PNG / حذف وترجيع رمادي)
+        function triggerImageUpload() {
+            document.getElementById('imageInput').click();
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // التحقق من الصيغة (JPG / PNG)
+            if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
+                alert('خطأ: يرجى اختيار صورة بصيغة JPG أو PNG فقط.');
+                return;
+            }
+
+            // التحقق من الحجم (أقل من 2 ميجابايت)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('خطأ: حجم الصورة يجب أن يكون أقل من 2 ميجابايت.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // معالجة مقاس الصورة إلى 640x640 دائرية
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 640;
+                    canvas.height = 640;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, 640, 640);
+                    
+                    const avatarDisplay = document.getElementById('avatarDisplay');
+                    avatarDisplay.style.background = 'none';
+                    avatarDisplay.innerHTML = `<img src="${canvas.toDataURL('image/jpeg')}" alt="Avatar">`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // حذف الصورة وترجيع الخلفية الرمادية الافتراضية
+        function resetAvatarToDefault() {
+            const avatarDisplay = document.getElementById('avatarDisplay');
+            avatarDisplay.style.background = '#666666'; // لون رمادي افتراضي
+            avatarDisplay.innerHTML = '<span id="avatarIcon">👤</span>';
+            document.getElementById('imageInput').value = '';
+            alert('تم حذف الصورة وإرجاع الخلفية الرمادية الافتراضية بنجاح ✅');
+        }
+
+        // 2. التحكم بالاسم (من 1 إلى 25 حرف، عربي وايموجي وانجليزي)
+        function editUsername() {
+            const currentName = document.getElementById('usernameText').innerText;
+            const newName = prompt('أدخل الاسم الجديد (من 1 إلى 25 حرف - يدعم العربي، الإنجليزي، والأيموجي):', currentName);
+            
+            if (newName !== null) {
+                const trimmed = newName.trim();
+                const charCount = [...trimmed].length; // لحساب الأيموجي والحروف بدقة
+                
+                if (charCount >= 1 && charCount <= 25) {
+                    document.getElementById('usernameText').innerText = trimmed;
+                } else {
+                    alert('خطأ: يجب أن يكون الاسم بين 1 و 25 حرفاً.');
+                }
+            }
+        }
+
+        // 3. التحكم بالنبذة (من 0 إلى 139 حرف)
+        function editBio() {
+            const currentBio = document.getElementById('bioText').innerText;
+            const newBio = prompt('أدخل النبذة التعريفية (من 0 إلى 139 حرف):', currentBio);
+            
+            if (newBio !== null) {
+                const charCount = [...newBio].length;
+                if (charCount <= 139) {
+                    document.getElementById('bioText').innerText = newBio;
+                } else {
+                    alert('خطأ: تجاوزت الحد المسموح به للنبذة (الحد الأقصى 139 حرفاً).');
+                }
+            }
+        }
+
+        // تحديد الحالة السريعة (متاح / مشغول)
+        function setPresetStatus(statusText) {
+            document.getElementById('bioText').innerText = statusText;
         }
     </script>
 </body>
