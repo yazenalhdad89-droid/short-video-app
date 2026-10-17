@@ -1,60 +1,71 @@
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>الملف الشخصي والحقيبة الاحترافية</title>
+    <title>الملف الشخصي - تطبيق الفيديوهات</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #121212; color: #fff; font-family: sans-serif; padding-bottom: 70px; }
+        body { background-color: #0f0f0f; color: #fff; font-family: sans-serif; padding-bottom: 75px; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #222; position: sticky; top: 0; background: #121212; z-index: 10; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #222; position: sticky; top: 0; background: #0f0f0f; z-index: 10; }
         .back-btn, .settings-btn, .share-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
         
         .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 15px; text-align: center; }
-        .avatar { width: 85px; height: 85px; border-radius: 50%; background: #333; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 38px; border: 2px solid #ff2b54; }
-        .username { font-size: 17px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .avatar { width: 90px; height: 90px; border-radius: 50%; background: #222; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 2.5px solid #ff2b54; position: relative; }
+        .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         .verified { color: #20d5ec; font-size: 15px; }
-        .bio { font-size: 13px; color: #aaa; margin: 6px 20px; line-height: 1.4; }
+        .bio { font-size: 13px; color: #bbb; margin: 8px 20px; line-height: 1.4; }
 
-        .stats { display: flex; justify-content: space-around; width: 85%; margin: 15px 0; }
-        .stat-item { text-align: center; }
+        .stats { display: flex; justify-content: space-around; width: 90%; margin: 15px 0; background: #181818; padding: 10px; border-radius: 12px; }
+        .stat-item { text-align: center; cursor: pointer; }
         .stat-value { font-weight: bold; font-size: 16px; }
-        .stat-label { font-size: 11px; color: #aaa; }
+        .stat-label { font-size: 11px; color: #aaa; margin-top: 2px; }
 
-        .actions { display: flex; gap: 10px; margin-bottom: 15px; }
-        .btn-follow { background: #ff2b54; border: none; color: #fff; padding: 7px 30px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; }
-        .btn-social { background: #222; border: 1px solid #333; color: #fff; padding: 7px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; }
+        .actions { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
+        .btn-main { background: #ff2b54; border: none; color: #fff; padding: 8px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .btn-sec { background: #222; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; }
 
         .tabs { display: flex; border-top: 1px solid #222; border-bottom: 1px solid #222; }
-        .tab { flex: 1; text-align: center; padding: 10px; font-size: 13px; color: #aaa; cursor: pointer; border-bottom: 2px solid transparent; }
-        .tab.active { color: #fff; border-bottom-color: #fff; font-weight: bold; }
+        .tab { flex: 1; text-align: center; padding: 11px; font-size: 13px; color: #888; cursor: pointer; border-bottom: 2px solid transparent; }
+        .tab.active { color: #fff; border-bottom-color: #ff2b54; font-weight: bold; }
 
         .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #000; }
         .grid-item { aspect-ratio: 9/16; background: #1a1a1a; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px; font-size: 11px; color: #fff; position: relative; border: 1px solid #222; }
         .views-count { background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; width: fit-content; font-size: 10px; }
 
-        /* نافذة الإعدادات والخصوصية */
+        /* نافذة الإعدادات الشاملة (قائمة جانبية) */
         .settings-modal {
             position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
             background: #121212; z-index: 100; transition: 0.3s ease-in-out; padding: 20px;
             overflow-y: auto;
         }
         .settings-modal.active { right: 0; }
-        .settings-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; padding-bottom: 15px; margin-bottom: 20px; font-size: 18px; font-weight: bold; }
-        .setting-section { margin-bottom: 25px; }
-        .setting-title { font-size: 14px; color: #ff2b54; margin-bottom: 10px; font-weight: bold; }
-        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #222; font-size: 14px; cursor: pointer; }
+        .settings-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; padding-bottom: 15px; margin-bottom: 20px; font-size: 17px; font-weight: bold; }
+        .setting-section { margin-bottom: 22px; }
+        .setting-title { font-size: 13px; color: #ff2b54; margin-bottom: 8px; font-weight: bold; text-transform: uppercase; }
+        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px; cursor: pointer; color: #ddd; }
+
+        /* نافذة الكاميرا ونشر الحالات/الفيديوهات */
+        .camera-modal {
+            position: fixed; bottom: -100%; left: 0; width: 100%; height: 85vh;
+            background: #181818; border-radius: 20px 20px 0 0; z-index: 200;
+            transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; align-items: center;
+        }
+        .camera-modal.active { bottom: 0; }
+        .camera-preview { width: 100%; height: 60vh; background: #000; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; border: 1px solid #333; }
+        .capture-btn { width: 70px; height: 70px; border-radius: 50%; background: #ff2b54; border: 4px solid #fff; margin-top: 20px; cursor: pointer; }
 
         /* شريط التنقل السفلي */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
-            background: #000; border-top: 1px solid #222; display: flex;
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 65px;
+            background: #0f0f0f; border-top: 1px solid #222; display: flex;
             justify-content: space-around; align-items: center; z-index: 50;
         }
-        .nav-item { background: none; border: none; color: #777; font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+        .nav-item { background: none; border: none; color: #777; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
         .nav-item.active { color: #fff; }
-        .nav-item span:first-child { font-size: 20px; }
+        .nav-item span:first-child { font-size: 22px; }
+        .nav-add-btn { background: #ff2b54; color: #fff; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -62,8 +73,8 @@
     <div class="header">
         <button class="back-btn" onclick="location.href='index.html'">➔</button>
         <span>الملف الشخصي</span>
-        <div style="display: flex; gap: 10px;">
-            <button class="share-btn" onclick="alert('تم نسخ رابط البروفايل بنجاح 🔗')">🔗</button>
+        <div style="display: flex; gap: 12px;">
+            <button class="share-btn" onclick="alert('تم نسخ رابط بروفايلك بنجاح 🔗')">🔗</button>
             <button class="settings-btn" onclick="openSettings()">⚙️</button>
         </div>
     </div>
@@ -71,85 +82,95 @@
     <div class="profile-info">
         <div class="avatar">👤</div>
         <div class="username">@المستخدم_الأول <span class="verified">✓</span></div>
-        <div class="bio">صانع محتوى ذكاء اصطناعي وفيديوهات قصيرة 🚀<br>تطوير تطبيقات الأندرويد خطوة بخطوة</div>
+        <div class="bio">صانع محتوى وفيديوهات قصيرة 🚀<br>تطوير وتصميم تطبيقات الذكاء الاصطناعي</div>
 
         <div class="stats">
-            <div class="stat-item"><div class="stat-value">120</div><div class="stat-label">متابعة</div></div>
-            <div class="stat-item"><div class="stat-value">15.4k</div><div class="stat-label">متابعون</div></div>
-            <div class="stat-item"><div class="stat-value">85.2k</div><div class="stat-label">تسجيلات إعجاب</div></div>
+            <div class="stat-item" onclick="alert('قائمة المتابعة (120)')"><div class="stat-value">120</div><div class="stat-label">متابعة</div></div>
+            <div class="stat-item" onclick="alert('قائمة المتابعين (15.4k)')"><div class="stat-value">15.4k</div><div class="stat-label">متابعون</div></div>
+            <div class="stat-item" onclick="alert('إجمالي الإعجابات (85.2k)')"><div class="stat-value">85.2k</div><div class="stat-label">إعجابات</div></div>
         </div>
 
         <div class="actions">
-            <button class="btn-follow" id="followBtn" onclick="toggleFollow()">متابعة</button>
-            <button class="btn-social" onclick="alert('تم ربط حساب انستغرام بنجاح!')">انستغرام 📷</button>
+            <button class="btn-main" id="followBtn" onclick="toggleFollow()">متابعة</button>
+            <button class="btn-sec" onclick="alert('تم ربط حساب انستغرام 📷')">انستغرام</button>
+            <button class="btn-sec" onclick="alert('تم ربط واتساب 💬')">واتساب</button>
+            <button class="btn-sec" onclick="alert('تم ربط يوتيوب 🔴')">يوتيوب</button>
         </div>
     </div>
 
     <div class="tabs">
         <div class="tab active">الفيديوهات (3)</div>
-        <div class="tab" onclick="alert('لا توجد فيديوهات معجب بها حالياً')">المعجب بها ❤️</div>
+        <div class="tab" onclick="alert('الفيديوهات المعجب بها فارغة حالياً')">المعجب بها ❤️</div>
+        <div class="tab" onclick="alert('سجل المشاهدات فارغ')">المشاهدات 👁️</div>
     </div>
 
     <div class="video-grid">
-        <div class="grid-item">
-            <div class="views-count">👁️ 1.2K</div>
-        </div>
-        <div class="grid-item">
-            <div class="views-count">👁️ 3.4K</div>
-        </div>
-        <div class="grid-item">
-            <div class="views-count">👁️ 850</div>
-        </div>
+        <div class="grid-item"><div class="views-count">👁️ 1.2K</div></div>
+        <div class="grid-item"><div class="views-count">👁️ 3.4K</div></div>
+        <div class="grid-item"><div class="views-count">👁️ 850</div></div>
     </div>
 
-    <!-- قائمة الإعدادات الشاملة والخصوصية -->
+    <!-- نافذة الإعدادات الشاملة (الحساب، الحظر، الأمان، والربط) -->
     <div class="settings-modal" id="settingsModal">
         <div class="settings-header">
             <span>الإعدادات والخصوصية</span>
-            <button onclick="closeSettings()" style="background:none; border:none; color:#fff; font-size:20px;">✕</button>
+            <button onclick="closeSettings()" style="background:none; border:none; color:#fff; font-size:22px;">✕</button>
         </div>
 
         <div class="setting-section">
-            <div class="setting-title">الحساب والأمان</div>
-            <div class="setting-item" onclick="alert('خصوصية الحساب: عام 🌐')">خصوصية الحساب (عام / خاص) 🔒</div>
-            <div class="setting-item" onclick="alert('مركز الأمان ووضع المراهقين مفعل ✅')">وضع المراهقين وقت الشاشة ⏳</div>
-            <div class="setting-item" onclick="alert('قائمة الكلمات المفتاحية المحظورة نشطة')">كلمات مفتاحية محظورة 🚫</div>
+            <div class="setting-title">إدارة الحساب والربط</div>
+            <div class="setting-item" onclick="prompt('أدخل رقم الهاتف للربط:')">📱 ربط رقم الهاتف</div>
+            <div class="setting-item" onclick="prompt('أدخل البريد الإلكتروني:')">📧 ربط البريد الإلكتروني</div>
+            <div class="setting-item" onclick="alert('تم الربط بحساب جوجل بنجاح ✅')">🌐 ربط حساب Google</div>
         </div>
 
         <div class="setting-section">
-            <div class="setting-title">الحق والربح والبرنامج</div>
-            <div class="setting-item" onclick="alert('حالة التحقق: موثق بالعلامة الزرقاء ✓')">التحقق من الهوية (العلامة الزرقاء) 🛡️</div>
-            <div class="setting-item" onclick="alert('صندوق المبدعين والأرباح: قيد التفعيل 💰')">صندوق المبدعين والربح (Creator Fund) 💵</div>
-            <div class="setting-item" onclick="alert('إصدار التطبيق: النسخة الاحترافية 1.0.0')">حقوق النشر وحق البرنامج (About) ℹ️</div>
+            <div class="setting-title">الخصوصية والأمان</div>
+            <div class="setting-item" onclick="alert('تم تغيير خصوصية الحساب إلى (خاص 🔒)')">🔒 خصوصية الحساب (عام / خاص)</div>
+            <div class="setting-item" onclick="alert('وضع تقييد المحتوى والمراهقين مفعل ⏳')">⏳ وضع تقييد المحتوى ووقت الشاشة</div>
+            <div class="setting-item" onclick="alert('تم حظر الحسابات المحددة بنجاح')">🚫 قائمة الحظر والحسابات المحظورة</div>
+            <div class="setting-item" onclick="alert('تم إرسال طلب البلاغ بنجاح للإدارة')">⚠️ الإبلاغ عن مشكلة</div>
         </div>
 
         <div class="setting-section">
-            <div class="setting-title">الدعم والمساعدة</div>
-            <div class="setting-item" onclick="alert('تم إرسال بلاغك بنجاح للإدارة')">الإبلاغ عن مشكلة أو حظر ⚠️</div>
+            <div class="setting-title">التحقق والأرباح</div>
+            <div class="setting-item" onclick="alert('حالة التحقق: موثق بالعلامة الزرقاء ✓')">🛡️ التحقق من الهوية (العلامة الزرقاء)</div>
+            <div class="setting-item" onclick="alert('صندوق المبدعين والأرباح نشط 💰')">💰 صندوق المبدعين والربح (Creator Fund)</div>
         </div>
     </div>
 
-    <!-- شريط التنقل السفلي -->
+    <!-- نافذة الكاميرا ونشر الحالة/الفيديو -->
+    <div class="camera-modal" id="cameraModal">
+        <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px;">
+            <span style="font-weight: bold; font-size: 16px;">تصوير ونشر حالة أو فيديو 🎥</span>
+            <button onclick="closeCamera()" style="background:none; border:none; color:#fff; font-size:20px;">✕</button>
+        </div>
+        <div class="camera-preview">
+            <span style="color: #777; font-size: 14px;">الكاميرا جاهزة للتصوير أو الرفع من الاستوديو 📱</span>
+        </div>
+        <button class="capture-btn" onclick="alert('تم بدء تسجيل وتصوير الفيديو بنجاح! 🚀')"></button>
+    </div>
+
+    <!-- شريط التنقل السفلي المتكامل -->
     <div class="bottom-nav">
         <button class="nav-item" onclick="location.href='index.html'">
             <span>🏠</span>
             <span>الرئيسية</span>
         </button>
-        <button class="nav-item" onclick="alert('قسم الاكسبلور والاكتشاف قيد التشغيل 🧭')">
+        <button class="nav-item" onclick="alert('قسم الاكسبلور والبحث نشط 🧭')">
             <span>🧭</span>
             <span>الاكسبلور</span>
         </button>
-        <button class="nav-item" onclick="alert('شاشة رفع الفيديو والتصوير قادمة في التحديث القادم ➕')">
-            <span>➕</span>
-            <span>نشر</span>
+        <button class="nav-item" onclick="openCamera()">
+            <div class="nav-add-btn">➕</div>
         </button>
         <button class="nav-item" onclick="alert('لا توجد رسائل جديدة ✉️')">
             <span>✉️</span>
             <span>الرسائل</span>
         </button>
-        <button class="nav-item active">
-            <span>👤</span>
-            <span>الملف الشخصي</span>
+        <button class="nav-item active" onclick="openSettings()">
+            <span>⚙️</span>
+            <span>الإعدادات</span>
         </button>
     </div>
 
@@ -172,7 +193,14 @@
         function closeSettings() {
             document.getElementById('settingsModal').classList.remove('active');
         }
+
+        function openCamera() {
+            document.getElementById('cameraModal').classList.add('active');
+        }
+
+        function closeCamera() {
+            document.getElementById('cameraModal').classList.remove('active');
+        }
     </script>
 </body>
 </html>
- 
