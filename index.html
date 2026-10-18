@@ -49,7 +49,7 @@
         .tab { flex: 1; text-align: center; padding: 11px; font-size: 13px; color: #888; cursor: pointer; border-bottom: 2px solid transparent; }
         .tab.active { color: #fff; border-bottom-color: #ff2b54; font-weight: bold; }
 
-        /* شبكة الفيديوهات الخاصة بالمستخدم فقط داخل بروفايله */
+        /* شبكة الفيديوهات الأصلية لتعمل وتظهر الفيديوهات بداخلها بوضوح */
         .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #000; }
         .grid-item { aspect-ratio: 9/16; background: #1a1a1a; position: relative; border: 1px solid #222; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .grid-item video { width: 100%; height: 100%; object-fit: cover; }
@@ -127,7 +127,6 @@
 <body>
 
     <div class="header">
-        <!-- زر خروج مباشر ينقلك فوراً إلى الصفحة الرئيسية لجميع المستخدمين index.html -->
         <button class="back-btn" onclick="goToMainFeed()">➔</button>
         <span>الملف الشخصي</span>
         <div style="display: flex; gap: 12px;">
@@ -172,6 +171,7 @@
         </div>
 
         <div class="actions">
+            <!-- زر المتابعة التفاعلي الأصلي -->
             <button class="btn-main" id="followBtn" onclick="toggleFollow()">متابعة</button>
             <a href="https://wa.me/?text=مرحباً، شاهدت تطبيق الفيديوهات الخاص بك وأعجبني جداً!" target="_blank" class="btn-sec">💬 واتساب</a>
             <a href="https://t.me/share/url?url=https://yazenalhdad89-droid.github.io/short-video-app/&text=تطبيق الفيديوهات القصيرة" target="_blank" class="btn-sec">✈️ تيليجرام</a>
@@ -181,4 +181,244 @@
 
     <div class="tabs">
         <div class="tab active">الفيديوهات (3)</div>
-        <div class="tab" onclick="alert('الفيديوهات المعجب بها فارغة حالياً')">المعجب بها
+        <div class="tab" onclick="alert('الفيديوهات المعجب بها فارغة حالياً')">المعجب بها ❤️</div>
+        <div class="tab" onclick="alert('سجل المشاهدات فارغ')">المشاهدات 👁️</div>
+    </div>
+
+    <!-- شبكة الفيديوهات الأصلية لتعمل وتظهر الفيديوهات بداخلها بوضوح -->
+    <div class="video-grid">
+        <div class="grid-item">
+            <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
+            <div class="views-count">👁️ 1.2K</div>
+        </div>
+        <div class="grid-item">
+            <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
+            <div class="views-count">👁️ 3.4K</div>
+        </div>
+        <div class="grid-item">
+            <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
+            <div class="views-count">👁️ 850</div>
+        </div>
+    </div>
+
+    <!-- نافذة عرض الفيديو العمودي المستقيم مع أزرار التحكم والتدوير -->
+    <div class="custom-video-modal" id="customVideoModal">
+        <div class="modal-controls">
+            <button class="modal-btn" onclick="rotateVideo()">🔄 تدوير</button>
+            <button class="modal-btn" onclick="closeCustomModal()">✕ إغلاق</button>
+        </div>
+        <div class="video-wrapper">
+            <video id="modalVideoPlayer" controls autoplay playsinline></video>
+        </div>
+    </div>
+
+    <!-- نافذة الإعدادات الشاملة -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-header">
+            <span>الإعدادات والخصوصية</span>
+            <button onclick="closeSettings()" style="background:none; border:none; color:#fff; font-size:22px;">✕</button>
+        </div>
+
+        <div class="setting-section">
+            <div class="setting-title">إدارة الحساب والربط</div>
+            <div class="setting-item" onclick="prompt('أدخل رقم الهاتف للربط:')">📱 ربط رقم الهاتف</div>
+            <div class="setting-item" onclick="prompt('أدخل البريد الإلكتروني:')">📧 ربط البريد الإلكتروني</div>
+            <div class="setting-item" onclick="alert('تم الربط بحساب جوجل بنجاح ✅')">🌐 ربط حساب Google</div>
+        </div>
+
+        <div class="setting-section">
+            <div class="setting-title">الخصوصية والأمان</div>
+            <div class="setting-item" onclick="alert('تم تغيير خصوصية الحساب إلى (خاص 🔒)')">🔒 خصوصية الحساب (عام / خاص)</div>
+            <div class="setting-item" onclick="alert('وضع تقييد المحتوى والمراهقين مفعل ⏳')">⏳ وضع تقييد المحتوى ووقت الشاشة</div>
+            <div class="setting-item" onclick="alert('تم حظر الحسابات المحددة بنجاح')">🚫 قائمة الحظر والحسابات المحظورة</div>
+            <div class="setting-item" onclick="alert('تم إرسال طلب البلاغ بنجاح للإدارة')">⚠️ الإبلاغ عن مشكلة</div>
+        </div>
+
+        <div class="setting-section">
+            <div class="setting-title">التحقق والأرباح</div>
+            <div class="setting-item" onclick="alert('حالة التحقق: موثق بالعلامة الزرقاء ✓')">🛡️ التحقق من الهوية (العلامة الزرقاء)</div>
+            <div class="setting-item" onclick="alert('صندوق المبدعين والأرباح نشط 💰')">💰 صندوق المبدعين والربح (Creator Fund)</div>
+        </div>
+    </div>
+
+    <!-- نافذة الكاميرا ونشر الحالة/الفيديو -->
+    <div class="camera-modal" id="cameraModal">
+        <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px;">
+            <span style="font-weight: bold; font-size: 16px;">تصوير ونشر حالة أو فيديو 🎥</span>
+            <button onclick="closeCamera()" style="background:none; border:none; color:#fff; font-size:20px;">✕</button>
+        </div>
+        <div class="camera-preview">
+            <span style="color: #777; font-size: 14px;">الكاميرا جاهزة للتصوير أو الرفع من الاستوديو 📱</span>
+        </div>
+        <button class="capture-btn" onclick="alert('تم بدء تسجيل وتصوير الفيديو بنجاح! 🚀')"></button>
+    </div>
+
+    <!-- شريط التنقل السفلي -->
+    <div class="bottom-nav">
+        <button class="nav-item" onclick="goToMainFeed()">
+            <span>🏠</span>
+            <span>الرئيسية</span>
+        </button>
+        <button class="nav-item" onclick="alert('قسم الاكسبلور والبحث نشط 🧭')">
+            <span>🧭</span>
+            <span>الاكسبلور</span>
+        </button>
+        <button class="nav-item" onclick="openCamera()">
+            <div class="nav-add-btn">➕</div>
+        </button>
+        <button class="nav-item" onclick="alert('لا توجد رسائل جديدة ✉️')">
+            <span>✉️</span>
+            <span>الرسائل</span>
+        </button>
+        <button class="nav-item" onclick="openSettings()">
+            <span>⚙️</span>
+            <span>الإعدادات</span>
+        </button>
+    </div>
+
+    <script>
+        // دالة زر المتابعة التفاعلي
+        function toggleFollow() {
+            const btn = document.getElementById('followBtn');
+            if (btn.innerText === "متابعة") {
+                btn.innerText = "تمت المتابعة";
+                btn.style.background = "#333";
+            } else {
+                btn.innerText = "متابعة";
+                btn.style.background = "#ff2b54";
+            }
+        }
+
+        // التوجيه المباشر لصفحة الفيديوهات الرئيسية
+        function goToMainFeed() {
+            window.location.href = 'index.html';
+        }
+
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        function openCamera() {
+            document.getElementById('cameraModal').classList.add('active');
+        }
+
+        function closeCamera() {
+            document.getElementById('cameraModal').classList.remove('active');
+        }
+
+        let currentRotation = 0;
+
+        function openCustomModal(src) {
+            const modal = document.getElementById('customVideoModal');
+            const video = document.getElementById('modalVideoPlayer');
+            video.src = src;
+            currentRotation = 0;
+            video.style.transform = `rotate(0deg)`;
+            modal.classList.add('active');
+            video.play();
+        }
+
+        function closeCustomModal() {
+            const modal = document.getElementById('customVideoModal');
+            const video = document.getElementById('modalVideoPlayer');
+            video.pause();
+            video.src = "";
+            modal.classList.remove('active');
+        }
+
+        function rotateVideo() {
+            const video = document.getElementById('modalVideoPlayer');
+            currentRotation = (currentRotation + 90) % 360;
+            video.style.transform = `rotate(${currentRotation}deg)`;
+        }
+
+        /* --- البرمجيات الخاصة بمواصفات الملف الشخصي --- */
+
+        // 1. التحكم بالصورة (640x640 / أقل من 2 ميجا / JPG-PNG / حذف وترجيع رمادي)
+        function triggerImageUpload() {
+            document.getElementById('imageInput').click();
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
+                alert('خطأ: يرجى اختيار صورة بصيغة JPG أو PNG فقط.');
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert('خطأ: حجم الصورة يجب أن يكون أقل من 2 ميجابايت.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 640;
+                    canvas.height = 640;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, 640, 640);
+                    
+                    const avatarDisplay = document.getElementById('avatarDisplay');
+                    avatarDisplay.style.background = 'none';
+                    avatarDisplay.innerHTML = `<img src="${canvas.toDataURL('image/jpeg')}" alt="Avatar">`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetAvatarToDefault() {
+            const avatarDisplay = document.getElementById('avatarDisplay');
+            avatarDisplay.style.background = '#666666';
+            avatarDisplay.innerHTML = '<span id="avatarIcon">👤</span>';
+            document.getElementById('imageInput').value = '';
+            alert('تم حذف الصورة وإرجاع الخلفية الرمادية الافتراضية بنجاح ✅');
+        }
+
+        // 2. التحكم بالاسم (من 1 إلى 25 حرف، عربي وايموجي وانجليزي)
+        function editUsername() {
+            const currentName = document.getElementById('usernameText').innerText;
+            const newName = prompt('أدخل الاسم الجديد (من 1 إلى 25 حرف - يدعم العربي، الإنجليزي، والأيموجي):', currentName);
+            
+            if (newName !== null) {
+                const trimmed = newName.trim();
+                const charCount = [...trimmed].length;
+                
+                if (charCount >= 1 && charCount <= 25) {
+                    document.getElementById('usernameText').innerText = trimmed;
+                } else {
+                    alert('خطأ: يجب أن يكون الاسم بين 1 و 25 حرفاً.');
+                }
+            }
+        }
+
+        // 3. التحكم بالنبذة (من 0 إلى 139 حرف)
+        function editBio() {
+            const currentBio = document.getElementById('bioText').innerText;
+            const newBio = prompt('أدخل النبذة التعريفية (من 0 إلى 139 حرف):', currentBio);
+            
+            if (newBio !== null) {
+                const charCount = [...newBio].length;
+                if (charCount <= 139) {
+                    document.getElementById('bioText').innerText = newBio;
+                } else {
+                    alert('خطأ: تجاوزت الحد المسموح به للنبذة (الحد الأقصى 139 حرفاً).');
+                }
+            }
+        }
+
+        function setPresetStatus(statusText) {
+            document.getElementById('bioText').innerText = statusText;
+        }
+    </script>
+</body>
+</html>
