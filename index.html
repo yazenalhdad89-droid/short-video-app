@@ -52,16 +52,17 @@
         /* أنيميشن القلب عند النقر المزدوج */
         .heart-pop {
             position: absolute;
-            font-size: 85px;
+            font-size: 90px;
             color: #ff2b54;
             pointer-events: none;
             animation: popHeart 0.8s ease-out forwards;
-            z-index: 50;
+            z-index: 99;
+            text-shadow: 0 0 15px rgba(255, 43, 84, 0.8);
         }
         @keyframes popHeart {
             0% { transform: scale(0) rotate(-15deg); opacity: 0; }
-            50% { transform: scale(1.3) rotate(0deg); opacity: 1; }
-            100% { transform: scale(1) translateY(-40px); opacity: 0; }
+            50% { transform: scale(1.4) rotate(0deg); opacity: 1; }
+            100% { transform: scale(1) translateY(-50px); opacity: 0; }
         }
 
         /* الأزرار الجانبية التفاعلية فوق الفيديو */
@@ -105,15 +106,19 @@
             background: #333; display: flex; align-items: center; justify-content: center;
             font-size: 26px; position: relative; cursor: pointer;
         }
+        
+        /* زر علامة الزائد للمتابعة */
         .plus-badge {
-            position: absolute; bottom: -5px; background: #ff2b54; color: #fff;
+            position: absolute; bottom: -6px; background: #ff2b54; color: #fff;
             border-radius: 50%; width: 22px; height: 22px; font-size: 14px;
             display: flex; align-items: center; justify-content: center; font-weight: bold;
-            cursor: pointer; z-index: 30; transition: background 0.2s;
+            cursor: pointer; z-index: 30; transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         .plus-badge.followed {
             background: #20d5ec;
             color: #000;
+            transform: scale(1.1);
         }
 
         /* تفاصيل الفيديو السفلية */
@@ -257,26 +262,26 @@
     <div class="page-view active" id="homeFeedView">
         <div class="tiktok-feed-container">
             
-            <!-- فيديو 1 -->
-            <div class="tiktok-card" onclick="handleCardClick(event, this)">
-                <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop autoplay playsinline></video>
+            <!-- فيديو 1 مع النقر المزدوج للإعجاب -->
+            <div class="tiktok-card" ondblclick="handleDoubleTap(event, this)">
+                <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop autoplay playsinline onclick="toggleVideoPlay(this)"></video>
                 
                 <!-- الأزرار الجانبية التفاعلية فوق الفيديو -->
                 <div class="side-actions-bar">
-                    <div class="creator-avatar" onclick="event.stopPropagation(); openProfilePage()" title="الانتقال لبروفايل المستخدم">
+                    <div class="creator-avatar" onclick="openProfilePage()" title="الانتقال لبروفايل المستخدم">
                         👤 
-                        <!-- زر المتابعة بعلامة الزائد (متوافق مع طلبك) -->
-                        <div class="plus-badge" onclick="event.stopPropagation(); toggleFollowCreator(this)">+</div>
+                        <!-- زر المتابعة (+) المباشر والمستقل -->
+                        <div class="plus-badge" onclick="event.stopPropagation(); followCreator(this)">+</div>
                     </div>
-                    <div class="action-box" onclick="event.stopPropagation(); toggleLike(this)">
+                    <div class="action-box" onclick="toggleLike(this)">
                         <div class="action-circle-icon">❤️</div>
                         <span class="like-counter">14.2K</span>
                     </div>
-                    <div class="action-box" onclick="event.stopPropagation(); openComments()">
+                    <div class="action-box" onclick="openComments()">
                         <div class="action-circle-icon">💬</div>
                         <span>852</span>
                     </div>
-                    <div class="action-box" onclick="event.stopPropagation(); shareVideo()">
+                    <div class="action-box" onclick="shareVideo()">
                         <div class="action-circle-icon">🔗</div>
                         <span>مشاركة</span>
                     </div>
@@ -289,24 +294,24 @@
                 </div>
             </div>
 
-            <!-- فيديو 2 -->
-            <div class="tiktok-card" onclick="handleCardClick(event, this)">
-                <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" loop playsinline></video>
+            <!-- فيديو 2 مع النقر المزدوج للإعجاب -->
+            <div class="tiktok-card" ondblclick="handleDoubleTap(event, this)">
+                <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" loop playsinline onclick="toggleVideoPlay(this)"></video>
                 
                 <div class="side-actions-bar">
-                    <div class="creator-avatar" onclick="event.stopPropagation(); openProfilePage()">
+                    <div class="creator-avatar" onclick="openProfilePage()">
                         🌸 
-                        <div class="plus-badge" onclick="event.stopPropagation(); toggleFollowCreator(this)">+</div>
+                        <div class="plus-badge" onclick="event.stopPropagation(); followCreator(this)">+</div>
                     </div>
-                    <div class="action-box" onclick="event.stopPropagation(); toggleLike(this)">
+                    <div class="action-box" onclick="toggleLike(this)">
                         <div class="action-circle-icon">❤️</div>
                         <span class="like-counter">38.9K</span>
                     </div>
-                    <div class="action-box" onclick="event.stopPropagation(); openComments()">
+                    <div class="action-box" onclick="openComments()">
                         <div class="action-circle-icon">💬</div>
                         <span>1.4K</span>
                     </div>
-                    <div class="action-box" onclick="event.stopPropagation(); shareVideo()">
+                    <div class="action-box" onclick="shareVideo()">
                         <div class="action-circle-icon">🔗</div>
                         <span>مشاركة</span>
                     </div>
@@ -321,10 +326,10 @@
         </div>
     </div>
 
-    <!-- 2. صفحة الملف الشخصي المستقلة بكامل ميزاتها الأصلية دون حذف -->
+    <!-- 2. صفحة الملف الشخصي المستقلة بكامل ميزاتها الأولية دون حذف -->
     <div class="page-view" id="profileView">
         <div class="profile-container-view">
-            <div class="header" style="position: relative; background: #0f0f0f;">
+            <div class="header" style="position: relative; background: #0f0f0f; display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #222;">
                 <button class="back-btn" onclick="openHomeFeed()">➔</button>
                 <span>الملف الشخصي</span>
                 <div style="display: flex; gap: 12px;">
@@ -334,7 +339,7 @@
             </div>
 
             <div class="profile-info">
-                <!-- الصورة: دائرية بمقاس 640x640 مع يدعم الرمادي الافتراضي -->
+                <!-- الصورة: دائرية بمقاس 640x640 مع دعم الرمادي الافتراضي -->
                 <div class="avatar-container">
                     <div class="avatar" id="avatarDisplay" onclick="triggerImageUpload()">
                         <span id="avatarIcon">👤</span>
@@ -459,3 +464,287 @@
             <div class="setting-item" onclick="alert('تم إرسال طلب البلاغ بنجاح للإدارة')">⚠️ الإبلاغ عن مشكلة</div>
         </div>
 
+        <div class="setting-section">
+            <div class="setting-title">التحقق والأرباح</div>
+            <div class="setting-item" onclick="alert('حالة التحقق: موثق بالعلامة الزرقاء ✓')">🛡️ التحقق من الهوية (العلامة الزرقاء)</div>
+            <div class="setting-item" onclick="alert('صندوق المبدعين والأرباح نشط 💰')">💰 صندوق المبدعين والربح (Creator Fund)</div>
+        </div>
+    </div>
+
+    <!-- نافذة الكاميرا ونشر الحالة/الفيديو -->
+    <div class="camera-modal" id="cameraModal">
+        <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px;">
+            <span style="font-weight: bold; font-size: 16px;">تصوير ونشر حالة أو فيديو 🎥</span>
+            <button onclick="closeCamera()" style="background:none; border:none; color:#fff; font-size:20px;">✕</button>
+        </div>
+        <div class="camera-preview">
+            <span style="color: #777; font-size: 14px;">الكاميرا جاهزة للتصوير أو الرفع من الاستوديو 📱</span>
+        </div>
+        <button class="capture-btn" onclick="alert('تم بدء تسجيل وتصوير الفيديو بنجاح! 🚀')"></button>
+    </div>
+
+    <!-- شريط التنقل السفلي المتكامل -->
+    <div class="bottom-nav">
+        <button class="nav-item active" id="navHome" onclick="openHomeFeed()">
+            <span>🏠</span>
+            <span>الرئيسية</span>
+        </button>
+        <button class="nav-item" onclick="alert('قسم الاكسبلور والبحث نشط 🧭')">
+            <span>🧭</span>
+            <span>الاكسبلور</span>
+        </button>
+        <button class="nav-item" onclick="openCamera()">
+            <div class="nav-add-btn">➕</div>
+        </button>
+        <button class="nav-item" onclick="alert('لا توجد رسائل جديدة ✉️')">
+            <span>✉️</span>
+            <span>الرسائل</span>
+        </button>
+        <button class="nav-item" id="navProfile" onclick="openProfilePage()">
+            <span>👤</span>
+            <span>الملف</span>
+        </button>
+    </div>
+
+    <script>
+        // التبديل بين الشاشات
+        function openHomeFeed() {
+            document.getElementById('homeFeedView').classList.add('active');
+            document.getElementById('profileView').classList.remove('active');
+            document.getElementById('navHome').classList.add('active');
+            document.getElementById('navProfile').classList.remove('active');
+            document.getElementById('mainHeader').style.display = 'flex';
+        }
+
+        function openProfilePage() {
+            document.getElementById('homeFeedView').classList.remove('active');
+            document.getElementById('profileView').classList.add('active');
+            document.getElementById('navHome').classList.remove('active');
+            document.getElementById('navProfile').classList.add('active');
+            document.getElementById('mainHeader').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+
+        // تشغيل وإيقاف الفيديو بنقرة واحدة
+        function toggleVideoPlay(video) {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        }
+
+        /* 🔴 1. الميزة الأولى: النقر المزدوج (Double Tap) لإظهار القلب والإعجاب المباشر */
+        function handleDoubleTap(event, cardElem) {
+            // إضافة وتوليد انيميشن القلب في موضع النقر
+            const heart = document.createElement('div');
+            heart.className = 'heart-pop';
+            heart.innerHTML = '❤️';
+
+            const rect = cardElem.getBoundingClientRect();
+            const x = event.clientX - rect.left - 45;
+            const y = event.clientY - rect.top - 45;
+
+            heart.style.left = `${x}px`;
+            heart.style.top = `${y}px`;
+
+            cardElem.appendChild(heart);
+
+            // تلوين زر الإعجاب الأحمر
+            const icon = cardElem.querySelector('.action-circle-icon');
+            if (icon) {
+                icon.style.color = 'red';
+            }
+
+            // حذف عنصر القلب بعد انتهاء الأنيميشن
+            setTimeout(() => {
+                heart.remove();
+            }, 800);
+        }
+
+        /* 🔴 2. الميزة الثانية: متابعة صانع المحتوى فوراً عند الضغط على زر (+) */
+        function followCreator(plusElem) {
+            if (plusElem.innerText.trim() === "+") {
+                plusElem.innerText = "✓";
+                plusElem.classList.add('followed');
+                alert('تمت متابعة صانع المحتوى بنجاح! 👤✨');
+            } else {
+                plusElem.innerText = "+";
+                plusElem.classList.remove('followed');
+            }
+        }
+
+        // زر الإعجاب التقليدي
+        function toggleLike(elem) {
+            const icon = elem.querySelector('.action-circle-icon');
+            if (icon.style.color === 'red') {
+                icon.style.color = '#fff';
+            } else {
+                icon.style.color = 'red';
+            }
+        }
+
+        // نافذة التعليقات
+        function openComments() {
+            document.getElementById('commentsModal').classList.add('active');
+        }
+
+        function closeComments() {
+            document.getElementById('commentsModal').classList.remove('active');
+        }
+
+        function addComment() {
+            const input = document.getElementById('newCommentInput');
+            if (input.value.trim() !== "") {
+                const list = document.getElementById('commentsList');
+                const div = document.createElement('div');
+                div.className = 'comment-item';
+                div.innerHTML = `<div><div class="comment-user">@أنت</div><div>${input.value.trim()}</div></div>`;
+                list.appendChild(div);
+                input.value = "";
+            }
+        }
+
+        function shareVideo() {
+            alert('تم نسخ رابط الفيديو بنجاح! 🔗');
+        }
+
+        function handleSearch(query) {
+            console.log("جاري البحث عن: ", query);
+        }
+
+        function toggleFollow() {
+            const btn = document.getElementById('followBtn');
+            if (btn.innerText === "متابعة") {
+                btn.innerText = "تمت المتابعة";
+                btn.style.background = "#333";
+            } else {
+                btn.innerText = "متابعة";
+                btn.style.background = "#ff2b54";
+            }
+        }
+
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        function openCamera() {
+            document.getElementById('cameraModal').classList.add('active');
+        }
+
+        function closeCamera() {
+            document.getElementById('cameraModal').classList.remove('active');
+        }
+
+        let currentRotation = 0;
+
+        function openCustomModal(src) {
+            const modal = document.getElementById('customVideoModal');
+            const video = document.getElementById('modalVideoPlayer');
+            video.src = src;
+            currentRotation = 0;
+            video.style.transform = `rotate(0deg)`;
+            modal.classList.add('active');
+            video.play();
+        }
+
+        function closeCustomModal() {
+            const modal = document.getElementById('customVideoModal');
+            const video = document.getElementById('modalVideoPlayer');
+            video.pause();
+            video.src = "";
+            modal.classList.remove('active');
+        }
+
+        function rotateVideo() {
+            const video = document.getElementById('modalVideoPlayer');
+            currentRotation = (currentRotation + 90) % 360;
+            video.style.transform = `rotate(${currentRotation}deg)`;
+        }
+
+        /* --- مواصفات الملف الشخصي --- */
+        function triggerImageUpload() {
+            document.getElementById('imageInput').click();
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
+                alert('خطأ: يرجى اختيار صورة بصيغة JPG أو PNG فقط.');
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert('خطأ: حجم الصورة يجب أن يكون أقل من 2 ميجابايت.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 640;
+                    canvas.height = 640;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, 640, 640);
+                    
+                    const avatarDisplay = document.getElementById('avatarDisplay');
+                    avatarDisplay.style.background = 'none';
+                    avatarDisplay.innerHTML = `<img src="${canvas.toDataURL('image/jpeg')}" alt="Avatar">`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetAvatarToDefault() {
+            const avatarDisplay = document.getElementById('avatarDisplay');
+            avatarDisplay.style.background = '#666666';
+            avatarDisplay.innerHTML = '<span id="avatarIcon">👤</span>';
+            document.getElementById('imageInput').value = '';
+            alert('تم حذف الصورة وإرجاع الخلفية الرمادية الافتراضية بنجاح ✅');
+        }
+
+        function editUsername() {
+            const currentName = document.getElementById('usernameText').innerText;
+            const newName = prompt('أدخل الاسم الجديد (من 1 إلى 25 حرف - يدعم العربي، الإنجليزي، والأيموجي):', currentName);
+            
+            if (newName !== null) {
+                const trimmed = newName.trim();
+                const charCount = [...trimmed].length;
+                
+                if (charCount >= 1 && charCount <= 25) {
+                    document.getElementById('usernameText').innerText = trimmed;
+                } else {
+                    alert('خطأ: يجب أن يكون الاسم بين 1 و 25 حرفاً.');
+                }
+            }
+        }
+
+        function editBio() {
+            const currentBio = document.getElementById('bioText').innerText;
+            const newBio = prompt('أدخل النبذة التعريفية (من 0 إلى 139 حرف):', currentBio);
+            
+            if (newBio !== null) {
+                const charCount = [...newBio].length;
+                if (charCount <= 139) {
+                    document.getElementById('bioText').innerText = newBio;
+                } else {
+                    alert('خطأ: تجاوزت الحد المسموح به للنبذة (الحد الأقصى 139 حرفاً).');
+                }
+            }
+        }
+
+        function setPresetStatus(statusText) {
+            document.getElementById('bioText').innerText = statusText;
+        }
+    </script>
+</body>
+</html>
