@@ -3,17 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>الملف الشخصي - تطبيق الفيديوهات</title>
+    <title>تطبيق الفيديوهات القصيرة - الرئيسية</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #0f0f0f; color: #fff; font-family: sans-serif; padding-bottom: 75px; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #222; position: sticky; top: 0; background: #0f0f0f; z-index: 10; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #222; position: sticky; top: 0; background: #0f0f0f; z-index: 10; gap: 10px; }
         .back-btn, .settings-btn, .share-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
         
+        /* شريط البحث العلوي الجديد */
+        .search-container { flex: 1; position: relative; }
+        .search-input {
+            width: 100%; background: #222; border: 1px solid #333; border-radius: 20px;
+            padding: 7px 15px 7px 35px; color: #fff; font-size: 13px; outline: none;
+        }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: #888; pointer-events: none; }
+
+        /* حاوية تبديل العروض (الرئيسية مقابل الملف الشخصي) */
+        .page-view { display: none; }
+        .page-view.active { display: block; }
+
         .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 15px; text-align: center; }
         
-        /* مواصفات الصورة: دائرية بمقاس 640x640 مع يدعم الرمادي الافتراضي */
+        /* مواصفات الصورة: دائرية بمقاس 640x640 مع دعم الرمادي الافتراضي وحذفها */
         .avatar-container { position: relative; display: inline-block; margin-bottom: 8px; }
         .avatar { 
             width: 90px; height: 90px; border-radius: 50%; 
@@ -31,7 +43,7 @@
         .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; }
         .verified { color: #20d5ec; font-size: 15px; }
         
-        /* النبذة والخيارات السريعة */
+        /* النبذة والخيارات السريعة (0 إلى 139 حرف) */
         .bio { font-size: 13px; color: #bbb; margin: 6px 20px 4px 20px; line-height: 1.4; cursor: pointer; word-break: break-word; }
         .status-presets { display: flex; gap: 8px; margin-bottom: 10px; }
         .status-chip { background: #181818; border: 1px solid #333; color: #aaa; font-size: 11px; padding: 2px 10px; border-radius: 10px; cursor: pointer; }
@@ -49,7 +61,7 @@
         .tab { flex: 1; text-align: center; padding: 11px; font-size: 13px; color: #888; cursor: pointer; border-bottom: 2px solid transparent; }
         .tab.active { color: #fff; border-bottom-color: #ff2b54; font-weight: bold; }
 
-        /* شبكة الفيديوهات الأصلية لتعمل وتظهر الفيديوهات بداخلها بوضوح */
+        /* شبكة الفيديوهات (الرئيسية لعرض فيديوهات جميع المستخدمين + بروفايل المستخدم) */
         .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #000; }
         .grid-item { aspect-ratio: 9/16; background: #1a1a1a; position: relative; border: 1px solid #222; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .grid-item video { width: 100%; height: 100%; object-fit: cover; }
@@ -126,82 +138,118 @@
 </head>
 <body>
 
-    <div class="header">
-        <button class="back-btn" onclick="goToMainFeed()">➔</button>
-        <span>الملف الشخصي</span>
-        <div style="display: flex; gap: 12px;">
-            <button class="share-btn" onclick="alert('تم نسخ رابط بروفايلك بنجاح 🔗')">🔗</button>
+    <!-- الهيدر العلوي الذكي (يتغير حسب الصفحة المعروضة) -->
+    <div class="header" id="mainHeader">
+        <button class="back-btn" onclick="openProfilePage()">👤</button>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="بحث عن مستخدمين، فيديوهات..." oninput="handleSearch(this.value)">
+            <span class="search-icon">🔍</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
             <button class="settings-btn" onclick="openSettings()">⚙️</button>
         </div>
     </div>
 
-    <div class="profile-info">
-        <!-- الصورة: دائرية، مع دعم المقاس، خيار الرفع وخيار الإرجاع إلى رمادي افتراضي -->
-        <div class="avatar-container">
-            <div class="avatar" id="avatarDisplay" onclick="triggerImageUpload()">
-                <span id="avatarIcon">👤</span>
+    <!-- 1. الصفحة الرئيسية (تظهر فيديوهات جميع المستخدمين مع شريط البحث) -->
+    <div class="page-view active" id="homeFeedView">
+        <div class="video-grid">
+            <div class="grid-item">
+                <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
+                <div class="views-count">👁️ 5.2K - @user_ali</div>
+            </div>
+            <div class="grid-item">
+                <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
+                <div class="views-count">👁️ 12.4K - @sara_video</div>
+            </div>
+            <div class="grid-item">
+                <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
+                <div class="views-count">👁️ 3.1K - @tech_world</div>
+            </div>
+            <div class="grid-item">
+                <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
+                <div class="views-count">👁️ 8.9K - @mohammed_99</div>
             </div>
         </div>
-        <div class="avatar-controls">
-            <button class="avatar-btn" onclick="triggerImageUpload()">📷 تغيير الصورة</button>
-            <button class="avatar-btn avatar-btn-delete" onclick="resetAvatarToDefault()">🗑️ حذف وترجيع رمادي</button>
-        </div>
-        <input type="file" id="imageInput" accept="image/png, image/jpeg" style="display: none;" onchange="handleImageUpload(event)">
+    </div>
 
-        <!-- الاسم: من 1 إلى 25 حرف (عربي، انجليزي، ايموجي) -->
-        <div class="username" id="usernameDisplay" onclick="editUsername()" title="انقر لتعديل الاسم">
-            <span id="usernameText">@المستخدم_الأول</span> <span class="verified">✓</span>
-        </div>
-
-        <!-- النبذة: من 0 إلى 139 حرف -->
-        <div class="bio" id="bioDisplay" onclick="editBio()" title="انقر لتعديل النبذة">
-            <span id="bioText">صانع محتوى وفيديوهات قصيرة 🚀<br>تطوير وتصميم تطبيقات الذكاء الاصطناعي</span>
+    <!-- 2. صفحة الملف الشخصي (مستقلة تماماً) -->
+    <div class="page-view" id="profileView">
+        <div class="header">
+            <button class="back-btn" onclick="openHomeFeed()">➔</button>
+            <span>الملف الشخصي</span>
+            <div style="display: flex; gap: 12px;">
+                <button class="share-btn" onclick="alert('تم نسخ رابط بروفايلك بنجاح 🔗')">🔗</button>
+                <button class="settings-btn" onclick="openSettings()">⚙️</button>
+            </div>
         </div>
 
-        <!-- أزرار سريعة للنبذة (متاح / مشغول) -->
-        <div class="status-presets">
-            <button class="status-chip" onclick="setPresetStatus('متاح 🟢')">🟢 متاح</button>
-            <button class="status-chip" onclick="setPresetStatus('مشغول 🔴')">🔴 مشغول</button>
+        <div class="profile-info">
+            <!-- الصورة: دائرية، مقاس 640x640، مع إمكانية الحذف والرجوع للرمادي -->
+            <div class="avatar-container">
+                <div class="avatar" id="avatarDisplay" onclick="triggerImageUpload()">
+                    <span id="avatarIcon">👤</span>
+                </div>
+            </div>
+            <div class="avatar-controls">
+                <button class="avatar-btn" onclick="triggerImageUpload()">📷 تغيير الصورة</button>
+                <button class="avatar-btn avatar-btn-delete" onclick="resetAvatarToDefault()">🗑️ حذف وترجيع رمادي</button>
+            </div>
+            <input type="file" id="imageInput" accept="image/png, image/jpeg" style="display: none;" onchange="handleImageUpload(event)">
+
+            <!-- الاسم: من 1 إلى 25 حرف (عربي، انجليزي، ايموجي) -->
+            <div class="username" id="usernameDisplay" onclick="editUsername()" title="انقر لتعديل الاسم">
+                <span id="usernameText">@المستخدم_الأول</span> <span class="verified">✓</span>
+            </div>
+
+            <!-- النبذة: من 0 إلى 139 حرف -->
+            <div class="bio" id="bioDisplay" onclick="editBio()" title="انقر لتعديل النبذة">
+                <span id="bioText">صانع محتوى وفيديوهات قصيرة 🚀<br>تطوير وتصميم تطبيقات الذكاء الاصطناعي</span>
+            </div>
+
+            <!-- أزرار سريعة للنبذة (متاح / مشغول) -->
+            <div class="status-presets">
+                <button class="status-chip" onclick="setPresetStatus('متاح 🟢')">🟢 متاح</button>
+                <button class="status-chip" onclick="setPresetStatus('مشغول 🔴')">🔴 مشغول</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item" onclick="alert('قائمة المتابعة (120)')"><div class="stat-value">120</div><div class="stat-label">متابعة</div></div>
+                <div class="stat-item" onclick="alert('قائمة المتابعين (15.4k)')"><div class="stat-value">15.4k</div><div class="stat-label">متابعون</div></div>
+                <div class="stat-item" onclick="alert('إجمالي الإعجابات (85.2k)')"><div class="stat-value">85.2k</div><div class="stat-label">إعجابات</div></div>
+            </div>
+
+            <div class="actions">
+                <!-- زر المتابعة التفاعلي الأصلي -->
+                <button class="btn-main" id="followBtn" onclick="toggleFollow()">متابعة</button>
+                <a href="https://wa.me/?text=مرحباً، شاهدت تطبيق الفيديوهات الخاص بك وأعجبني جداً!" target="_blank" class="btn-sec">💬 واتساب</a>
+                <a href="https://t.me/share/url?url=https://yazenalhdad89-droid.github.io/short-video-app/&text=تطبيق الفيديوهات القصيرة" target="_blank" class="btn-sec">✈️ تيليجرام</a>
+                <a href="https://www.instagram.com/" target="_blank" class="btn-sec">📷 انستغرام</a>
+            </div>
         </div>
 
-        <div class="stats">
-            <div class="stat-item" onclick="alert('قائمة المتابعة (120)')"><div class="stat-value">120</div><div class="stat-label">متابعة</div></div>
-            <div class="stat-item" onclick="alert('قائمة المتابعين (15.4k)')"><div class="stat-value">15.4k</div><div class="stat-label">متابعون</div></div>
-            <div class="stat-item" onclick="alert('إجمالي الإعجابات (85.2k)')"><div class="stat-value">85.2k</div><div class="stat-label">إعجابات</div></div>
+        <div class="tabs">
+            <div class="tab active">فيديوهاتي (3)</div>
+            <div class="tab" onclick="alert('الفيديوهات المعجب بها فارغة حالياً')">المعجب بها ❤️</div>
+            <div class="tab" onclick="alert('سجل المشاهدات فارغ')">المشاهدات 👁️</div>
         </div>
 
-        <div class="actions">
-            <!-- زر المتابعة التفاعلي الأصلي -->
-            <button class="btn-main" id="followBtn" onclick="toggleFollow()">متابعة</button>
-            <a href="https://wa.me/?text=مرحباً، شاهدت تطبيق الفيديوهات الخاص بك وأعجبني جداً!" target="_blank" class="btn-sec">💬 واتساب</a>
-            <a href="https://t.me/share/url?url=https://yazenalhdad89-droid.github.io/short-video-app/&text=تطبيق الفيديوهات القصيرة" target="_blank" class="btn-sec">✈️ تيليجرام</a>
-            <a href="https://www.instagram.com/" target="_blank" class="btn-sec">📷 انستغرام</a>
+        <div class="video-grid">
+            <div class="grid-item">
+                <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
+                <div class="views-count">👁️ 1.2K</div>
+            </div>
+            <div class="grid-item">
+                <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
+                <div class="views-count">👁️ 3.4K</div>
+            </div>
+            <div class="grid-item">
+                <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
+                <div class="views-count">👁️ 850</div>
+            </div>
         </div>
     </div>
 
-    <div class="tabs">
-        <div class="tab active">الفيديوهات (3)</div>
-        <div class="tab" onclick="alert('الفيديوهات المعجب بها فارغة حالياً')">المعجب بها ❤️</div>
-        <div class="tab" onclick="alert('سجل المشاهدات فارغ')">المشاهدات 👁️</div>
-    </div>
-
-    <!-- شبكة الفيديوهات الأصلية لتعمل وتظهر الفيديوهات بداخلها بوضوح -->
-    <div class="video-grid">
-        <div class="grid-item">
-            <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
-            <div class="views-count">👁️ 1.2K</div>
-        </div>
-        <div class="grid-item">
-            <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
-            <div class="views-count">👁️ 3.4K</div>
-        </div>
-        <div class="grid-item">
-            <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
-            <div class="views-count">👁️ 850</div>
-        </div>
-    </div>
-
-    <!-- نافذة عرض الفيديو العمودي المستقيم مع أزرار التحكم والتدوير -->
+    <!-- نافذة عرض الفيديو العمودي المستقيم مع زر التدوير -->
     <div class="custom-video-modal" id="customVideoModal">
         <div class="modal-controls">
             <button class="modal-btn" onclick="rotateVideo()">🔄 تدوير</button>
@@ -253,9 +301,9 @@
         <button class="capture-btn" onclick="alert('تم بدء تسجيل وتصوير الفيديو بنجاح! 🚀')"></button>
     </div>
 
-    <!-- شريط التنقل السفلي -->
+    <!-- شريط التنقل السفلي المتكامل -->
     <div class="bottom-nav">
-        <button class="nav-item" onclick="goToMainFeed()">
+        <button class="nav-item active" id="navHome" onclick="openHomeFeed()">
             <span>🏠</span>
             <span>الرئيسية</span>
         </button>
@@ -270,13 +318,35 @@
             <span>✉️</span>
             <span>الرسائل</span>
         </button>
-        <button class="nav-item" onclick="openSettings()">
-            <span>⚙️</span>
-            <span>الإعدادات</span>
+        <button class="nav-item" id="navProfile" onclick="openProfilePage()">
+            <span>👤</span>
+            <span>الملف</span>
         </button>
     </div>
 
     <script>
+        // التبديل بين الشاشات بسلاسة تامة
+        function openHomeFeed() {
+            document.getElementById('homeFeedView').classList.add('active');
+            document.getElementById('profileView').classList.remove('active');
+            document.getElementById('navHome').classList.add('active');
+            document.getElementById('navProfile').classList.remove('active');
+            window.scrollTo(0, 0);
+        }
+
+        function openProfilePage() {
+            document.getElementById('homeFeedView').classList.remove('active');
+            document.getElementById('profileView').classList.add('active');
+            document.getElementById('navHome').classList.remove('active');
+            document.getElementById('navProfile').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // دالة البحث في القائمة الرئيسية
+        function handleSearch(query) {
+            console.log("جاري البحث عن: ", query);
+        }
+
         // دالة زر المتابعة التفاعلي
         function toggleFollow() {
             const btn = document.getElementById('followBtn');
@@ -286,15 +356,6 @@
             } else {
                 btn.innerText = "متابعة";
                 btn.style.background = "#ff2b54";
-            }
-        }
-
-        // دالة التنقل الفعالة للخروج والعودة لصفحة الفيديوهات الرئيسية
-        function goToMainFeed() {
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                window.location.href = 'index.html';
             }
         }
 
@@ -340,9 +401,9 @@
             video.style.transform = `rotate(${currentRotation}deg)`;
         }
 
-        /* --- البرمجيات الخاصة بمواصفات الملف الشخصي --- */
+        /* --- مواصفات الملف الشخصي المضافة --- */
 
-        // 1. التحكم بالصورة (640x640 / أقل من 2 ميجا / JPG-PNG / حذف وترجيع رمادي)
+        // 1. الصورة (640x640 / أقل من 2 ميجا / JPG-PNG / زر حذف للون الرمادي)
         function triggerImageUpload() {
             document.getElementById('imageInput').click();
         }
@@ -388,7 +449,7 @@
             alert('تم حذف الصورة وإرجاع الخلفية الرمادية الافتراضية بنجاح ✅');
         }
 
-        // 2. التحكم بالاسم (من 1 إلى 25 حرف، عربي وايموجي وانجليزي)
+        // 2. الاسم (من 1 إلى 25 حرف، عربي وانجليزي وايموجي)
         function editUsername() {
             const currentName = document.getElementById('usernameText').innerText;
             const newName = prompt('أدخل الاسم الجديد (من 1 إلى 25 حرف - يدعم العربي، الإنجليزي، والأيموجي):', currentName);
@@ -405,7 +466,7 @@
             }
         }
 
-        // 3. التحكم بالنبذة (من 0 إلى 139 حرف)
+        // 3. النبذة (من 0 إلى 139 حرف)
         function editBio() {
             const currentBio = document.getElementById('bioText').innerText;
             const newBio = prompt('أدخل النبذة التعريفية (من 0 إلى 139 حرف):', currentBio);
