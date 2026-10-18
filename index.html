@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تطبيق الفيديوهات القصيرة - الرئيسية</title>
+    <title>تطبيق الفيديوهات القصيرة</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #0f0f0f; color: #fff; font-family: sans-serif; padding-bottom: 75px; }
+        body { background-color: #0f0f0f; color: #fff; font-family: sans-serif; padding-bottom: 65px; overflow-x: hidden; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #222; position: sticky; top: 0; background: #0f0f0f; z-index: 10; gap: 10px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #222; position: fixed; top: 0; width: 100%; background: rgba(15,15,15,0.85); backdrop-filter: blur(8px); z-index: 100; gap: 10px; }
         .back-btn, .settings-btn, .share-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
         
-        /* شريط البحث العلوي الجديد */
+        /* شريط البحث العلوي */
         .search-container { flex: 1; position: relative; }
         .search-input {
             width: 100%; background: #222; border: 1px solid #333; border-radius: 20px;
@@ -23,16 +23,109 @@
         .page-view { display: none; }
         .page-view.active { display: block; }
 
-        .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 15px; text-align: center; }
+        /* خلاصة الفيديوهات بالسحب العمودي - TikTok Style Feed */
+        .tiktok-feed {
+            height: 100vh;
+            width: 100vw;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            background: #000;
+        }
+        .tiktok-video-card {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tiktok-video-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* العناصر الجانبية التفاعلية فوق الفيديو */
+        .side-actions {
+            position: absolute;
+            right: 12px;
+            bottom: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            z-index: 10;
+        }
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+            cursor: pointer;
+            font-size: 11px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        .action-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 3px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .profile-avatar-icon {
+            width: 48px; height: 48px; border-radius: 50%; border: 2px solid #ff2b54;
+            background: #333; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; position: relative;
+        }
+        .add-badge {
+            position: absolute; bottom: -5px; background: #ff2b54; color: #fff;
+            border-radius: 50%; width: 18px; height: 18px; font-size: 12px;
+            display: flex; align-items: center; justify-content: center; font-weight: bold;
+        }
+
+        /* تفاصيل الفيديو السفلية */
+        .video-details {
+            position: absolute;
+            left: 15px;
+            bottom: 85px;
+            z-index: 10;
+            max-width: 75%;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        .video-user { font-weight: bold; font-size: 15px; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+        .video-caption { font-size: 13px; color: #eee; line-height: 1.3; }
+
+        /* نافذة التعليقات المنبثقة */
+        .comments-modal {
+            position: fixed; bottom: -100%; left: 0; width: 100%; height: 60vh;
+            background: #181818; border-radius: 16px 16px 0 0; z-index: 200;
+            transition: 0.3s ease-in-out; padding: 15px; display: flex; flex-direction: column;
+        }
+        .comments-modal.active { bottom: 0; }
+        .comments-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid #222; font-size: 14px; font-weight: bold; }
+        .comments-list { flex: 1; overflow-y: auto; margin: 10px 0; display: flex; flex-direction: column; gap: 12px; }
+        .comment-item { display: flex; gap: 10px; font-size: 12px; }
+        .comment-user { font-weight: bold; color: #ff2b54; margin-bottom: 2px; }
+        .comment-input-box { display: flex; gap: 8px; }
+        .comment-input-box input { flex: 1; background: #222; border: 1px solid #333; padding: 8px 12px; border-radius: 20px; color: #fff; font-size: 12px; outline: none; }
+        .comment-input-box button { background: #ff2b54; border: none; color: #fff; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+
+        /* تنسيقات البروفايل الأصلي */
+        .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 60px; text-align: center; }
         
-        /* مواصفات الصورة: دائرية بمقاس 640x640 مع دعم الرمادي الافتراضي وحذفها */
         .avatar-container { position: relative; display: inline-block; margin-bottom: 8px; }
         .avatar { 
             width: 90px; height: 90px; border-radius: 50%; 
-            background: #666666; /* لون رمادي افتراضي */
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 40px; border: 2.5px solid #ff2b54; 
-            overflow: hidden; cursor: pointer; color: #fff;
+            background: #666666; display: flex; align-items: center; justify-content: center; 
+            font-size: 40px; border: 2.5px solid #ff2b54; overflow: hidden; cursor: pointer; color: #fff;
         }
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
         
@@ -43,7 +136,6 @@
         .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; }
         .verified { color: #20d5ec; font-size: 15px; }
         
-        /* النبذة والخيارات السريعة (0 إلى 139 حرف) */
         .bio { font-size: 13px; color: #bbb; margin: 6px 20px 4px 20px; line-height: 1.4; cursor: pointer; word-break: break-word; }
         .status-presets { display: flex; gap: 8px; margin-bottom: 10px; }
         .status-chip { background: #181818; border: 1px solid #333; color: #aaa; font-size: 11px; padding: 2px 10px; border-radius: 10px; cursor: pointer; }
@@ -61,13 +153,12 @@
         .tab { flex: 1; text-align: center; padding: 11px; font-size: 13px; color: #888; cursor: pointer; border-bottom: 2px solid transparent; }
         .tab.active { color: #fff; border-bottom-color: #ff2b54; font-weight: bold; }
 
-        /* شبكة الفيديوهات (الرئيسية لعرض فيديوهات جميع المستخدمين + بروفايل المستخدم) */
         .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #000; }
         .grid-item { aspect-ratio: 9/16; background: #1a1a1a; position: relative; border: 1px solid #222; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .grid-item video { width: 100%; height: 100%; object-fit: cover; }
         .views-count { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; font-size: 10px; z-index: 2; pointer-events: none; }
 
-        /* نافذة مشغل الفيديو العمودي المستقيم مع أزرار التحكم والتدوير */
+        /* نافذة مشغل الفيديو العمودي المستقيم مع زر التدوير */
         .custom-video-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 300; display: none;
@@ -102,7 +193,6 @@
             display: inline-flex; align-items: center; gap: 5px; backdrop-filter: blur(5px);
         }
 
-        /* نافذة الإعدادات الشاملة */
         .settings-modal {
             position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
             background: #121212; z-index: 100; transition: 0.3s ease-in-out; padding: 20px;
@@ -114,7 +204,6 @@
         .setting-title { font-size: 13px; color: #ff2b54; margin-bottom: 8px; font-weight: bold; text-transform: uppercase; }
         .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px; cursor: pointer; color: #ddd; }
 
-        /* نافذة الكاميرا ونشر الحالة/الفيديو */
         .camera-modal {
             position: fixed; bottom: -100%; left: 0; width: 100%; height: 85vh;
             background: #181818; border-radius: 20px 20px 0 0; z-index: 200;
@@ -124,11 +213,10 @@
         .camera-preview { width: 100%; height: 60vh; background: #000; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; border: 1px solid #333; }
         .capture-btn { width: 70px; height: 70px; border-radius: 50%; background: #ff2b54; border: 4px solid #fff; margin-top: 20px; cursor: pointer; }
 
-        /* شريط التنقل السفلي */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 65px;
             background: #0f0f0f; border-top: 1px solid #222; display: flex;
-            justify-content: space-around; align-items: center; z-index: 50;
+            justify-content: space-around; align-items: center; z-index: 150;
         }
         .nav-item { background: none; border: none; color: #777; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; text-decoration: none; }
         .nav-item.active { color: #fff; }
@@ -138,7 +226,7 @@
 </head>
 <body>
 
-    <!-- الهيدر العلوي الذكي (يتغير حسب الصفحة المعروضة) -->
+    <!-- الهيدر العلوي مع شريط البحث -->
     <div class="header" id="mainHeader">
         <button class="back-btn" onclick="openProfilePage()">👤</button>
         <div class="search-container">
@@ -150,31 +238,68 @@
         </div>
     </div>
 
-    <!-- 1. الصفحة الرئيسية (تظهر فيديوهات جميع المستخدمين مع شريط البحث) -->
+    <!-- 1. الشاشة الرئيسية لجميع الفيديوهات بالسحب للأعلى والأسفل (TikTok Fullscreen Feed) -->
     <div class="page-view active" id="homeFeedView">
-        <div class="video-grid">
-            <div class="grid-item">
-                <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
-                <div class="views-count">👁️ 5.2K - @user_ali</div>
+        <div class="tiktok-feed">
+            
+            <!-- فيديو 1 -->
+            <div class="tiktok-video-card">
+                <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop autoplay playsinline onclick="togglePlay(this)"></video>
+                <div class="side-actions">
+                    <div class="profile-avatar-icon" onclick="openProfilePage()">
+                        👤 <div class="add-badge">+</div>
+                    </div>
+                    <div class="action-item" onclick="toggleLike(this)">
+                        <div class="action-icon">❤️</div>
+                        <span class="like-count">12.5K</span>
+                    </div>
+                    <div class="action-item" onclick="openComments()">
+                        <div class="action-icon">💬</div>
+                        <span>482</span>
+                    </div>
+                    <div class="action-item" onclick="shareVideo()">
+                        <div class="action-icon">🔗</div>
+                        <span>مشاركة</span>
+                    </div>
+                </div>
+                <div class="video-details">
+                    <div class="video-user">@علي_المصمم <span class="verified">✓</span></div>
+                    <div class="video-caption">فيديو رائع ومثير للاحترافية ✨ #تصميم #ذكاء_اصطناعي</div>
+                </div>
             </div>
-            <div class="grid-item">
-                <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
-                <div class="views-count">👁️ 12.4K - @sara_video</div>
+
+            <!-- فيديو 2 -->
+            <div class="tiktok-video-card">
+                <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" loop playsinline onclick="togglePlay(this)"></video>
+                <div class="side-actions">
+                    <div class="profile-avatar-icon" onclick="openProfilePage()">
+                        🌸 <div class="add-badge">+</div>
+                    </div>
+                    <div class="action-item" onclick="toggleLike(this)">
+                        <div class="action-icon">❤️</div>
+                        <span class="like-count">45.1K</span>
+                    </div>
+                    <div class="action-item" onclick="openComments()">
+                        <div class="action-icon">💬</div>
+                        <span>1.2K</span>
+                    </div>
+                    <div class="action-item" onclick="shareVideo()">
+                        <div class="action-icon">🔗</div>
+                        <span>مشاركة</span>
+                    </div>
+                </div>
+                <div class="video-details">
+                    <div class="video-user">@سارة_طبيعة 🌿</div>
+                    <div class="video-caption">جمال الزهور والطبيعة الخلابة 🌸🌼 #طبيعة</div>
+                </div>
             </div>
-            <div class="grid-item">
-                <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
-                <div class="views-count">👁️ 3.1K - @tech_world</div>
-            </div>
-            <div class="grid-item">
-                <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
-                <div class="views-count">👁️ 8.9K - @mohammed_99</div>
-            </div>
+
         </div>
     </div>
 
-    <!-- 2. صفحة الملف الشخصي (مستقلة تماماً) -->
+    <!-- 2. صفحة الملف الشخصي المستقلة -->
     <div class="page-view" id="profileView">
-        <div class="header">
+        <div class="header" style="position: relative; background: #0f0f0f;">
             <button class="back-btn" onclick="openHomeFeed()">➔</button>
             <span>الملف الشخصي</span>
             <div style="display: flex; gap: 12px;">
@@ -184,7 +309,6 @@
         </div>
 
         <div class="profile-info">
-            <!-- الصورة: دائرية، مقاس 640x640، مع إمكانية الحذف والرجوع للرمادي -->
             <div class="avatar-container">
                 <div class="avatar" id="avatarDisplay" onclick="triggerImageUpload()">
                     <span id="avatarIcon">👤</span>
@@ -196,17 +320,14 @@
             </div>
             <input type="file" id="imageInput" accept="image/png, image/jpeg" style="display: none;" onchange="handleImageUpload(event)">
 
-            <!-- الاسم: من 1 إلى 25 حرف (عربي، انجليزي، ايموجي) -->
             <div class="username" id="usernameDisplay" onclick="editUsername()" title="انقر لتعديل الاسم">
                 <span id="usernameText">@المستخدم_الأول</span> <span class="verified">✓</span>
             </div>
 
-            <!-- النبذة: من 0 إلى 139 حرف -->
             <div class="bio" id="bioDisplay" onclick="editBio()" title="انقر لتعديل النبذة">
                 <span id="bioText">صانع محتوى وفيديوهات قصيرة 🚀<br>تطوير وتصميم تطبيقات الذكاء الاصطناعي</span>
             </div>
 
-            <!-- أزرار سريعة للنبذة (متاح / مشغول) -->
             <div class="status-presets">
                 <button class="status-chip" onclick="setPresetStatus('متاح 🟢')">🟢 متاح</button>
                 <button class="status-chip" onclick="setPresetStatus('مشغول 🔴')">🔴 مشغول</button>
@@ -219,7 +340,6 @@
             </div>
 
             <div class="actions">
-                <!-- زر المتابعة التفاعلي الأصلي -->
                 <button class="btn-main" id="followBtn" onclick="toggleFollow()">متابعة</button>
                 <a href="https://wa.me/?text=مرحباً، شاهدت تطبيق الفيديوهات الخاص بك وأعجبني جداً!" target="_blank" class="btn-sec">💬 واتساب</a>
                 <a href="https://t.me/share/url?url=https://yazenalhdad89-droid.github.io/short-video-app/&text=تطبيق الفيديوهات القصيرة" target="_blank" class="btn-sec">✈️ تيليجرام</a>
@@ -246,6 +366,32 @@
                 <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
                 <div class="views-count">👁️ 850</div>
             </div>
+        </div>
+    </div>
+
+    <!-- نافذة التعليقات المنبثقة -->
+    <div class="comments-modal" id="commentsModal">
+        <div class="comments-header">
+            <span>التعليقات (2)</span>
+            <button onclick="closeComments()" style="background:none; border:none; color:#fff; font-size:18px;">✕</button>
+        </div>
+        <div class="comments-list" id="commentsList">
+            <div class="comment-item">
+                <div>
+                    <div class="comment-user">@أحمد</div>
+                    <div>فيديو ممتاز جداً ومبدع! 🔥</div>
+                </div>
+            </div>
+            <div class="comment-item">
+                <div>
+                    <div class="comment-user">@سارة</div>
+                    <div>استمر يا بطل بالتوفيق 👍</div>
+                </div>
+            </div>
+        </div>
+        <div class="comment-input-box">
+            <input type="text" id="newCommentInput" placeholder="أضف تعليقاً...">
+            <button onclick="addComment()">نشر</button>
         </div>
     </div>
 
@@ -325,13 +471,13 @@
     </div>
 
     <script>
-        // التبديل بين الشاشات بسلاسة تامة
+        // التبديل بين الشاشات
         function openHomeFeed() {
             document.getElementById('homeFeedView').classList.add('active');
             document.getElementById('profileView').classList.remove('active');
             document.getElementById('navHome').classList.add('active');
             document.getElementById('navProfile').classList.remove('active');
-            window.scrollTo(0, 0);
+            document.getElementById('mainHeader').style.display = 'flex';
         }
 
         function openProfilePage() {
@@ -339,15 +485,58 @@
             document.getElementById('profileView').classList.add('active');
             document.getElementById('navHome').classList.remove('active');
             document.getElementById('navProfile').classList.add('active');
+            document.getElementById('mainHeader').style.display = 'none';
             window.scrollTo(0, 0);
         }
 
-        // دالة البحث في القائمة الرئيسية
+        // تشغيل وإيقاف الفيديو عند النقر
+        function togglePlay(video) {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        }
+
+        // زر الإعجاب والتفاعل
+        function toggleLike(elem) {
+            const icon = elem.querySelector('.action-icon');
+            if (icon.style.color === 'red') {
+                icon.style.color = '#fff';
+            } else {
+                icon.style.color = 'red';
+            }
+        }
+
+        // نافذة التعليقات
+        function openComments() {
+            document.getElementById('commentsModal').classList.add('active');
+        }
+
+        function closeComments() {
+            document.getElementById('commentsModal').classList.remove('active');
+        }
+
+        function addComment() {
+            const input = document.getElementById('newCommentInput');
+            if (input.value.trim() !== "") {
+                const list = document.getElementById('commentsList');
+                const div = document.createElement('div');
+                div.className = 'comment-item';
+                div.innerHTML = `<div><div class="comment-user">@أنت</div><div>${input.value.trim()}</div></div>`;
+                list.appendChild(div);
+                input.value = "";
+            }
+        }
+
+        function shareVideo() {
+            alert('تم نسخ رابط الفيديو بنجاح! 🔗');
+        }
+
         function handleSearch(query) {
             console.log("جاري البحث عن: ", query);
         }
 
-        // دالة زر المتابعة التفاعلي
         function toggleFollow() {
             const btn = document.getElementById('followBtn');
             if (btn.innerText === "متابعة") {
@@ -401,9 +590,7 @@
             video.style.transform = `rotate(${currentRotation}deg)`;
         }
 
-        /* --- مواصفات الملف الشخصي المضافة --- */
-
-        // 1. الصورة (640x640 / أقل من 2 ميجا / JPG-PNG / زر حذف للون الرمادي)
+        /* --- مواصفات البروفايل --- */
         function triggerImageUpload() {
             document.getElementById('imageInput').click();
         }
@@ -449,7 +636,6 @@
             alert('تم حذف الصورة وإرجاع الخلفية الرمادية الافتراضية بنجاح ✅');
         }
 
-        // 2. الاسم (من 1 إلى 25 حرف، عربي وانجليزي وايموجي)
         function editUsername() {
             const currentName = document.getElementById('usernameText').innerText;
             const newName = prompt('أدخل الاسم الجديد (من 1 إلى 25 حرف - يدعم العربي، الإنجليزي، والأيموجي):', currentName);
@@ -466,7 +652,6 @@
             }
         }
 
-        // 3. النبذة (من 0 إلى 139 حرف)
         function editBio() {
             const currentBio = document.getElementById('bioText').innerText;
             const newBio = prompt('أدخل النبذة التعريفية (من 0 إلى 139 حرف):', currentBio);
