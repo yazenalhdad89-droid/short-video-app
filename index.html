@@ -3,263 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تطبيق الفيديوهات القصيرة - الشامل</title>
+    <title>تطبيق الفيديوهات - الرئيسية</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #0f0f0f; color: #fff; font-family: sans-serif; overflow-x: hidden; }
-        
-        /* شريط الهيدر العلوي مع شريط البحث */
-        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; position: fixed; top: 0; width: 100%; background: rgba(15,15,15,0.7); backdrop-filter: blur(8px); z-index: 100; gap: 10px; }
-        .back-btn, .settings-btn, .share-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
-        
+        body { background-color: #000; color: #fff; font-family: sans-serif; overflow: hidden; }
+
+        /* الهيدر العلوي وشريط البحث */
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; position: fixed; top: 0; width: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 100; gap: 10px; }
         .search-container { flex: 1; position: relative; }
-        .search-input {
-            width: 100%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px;
-            padding: 7px 15px 7px 35px; color: #fff; font-size: 13px; outline: none; backdrop-filter: blur(5px);
-        }
-        .search-input::placeholder { color: #ccc; }
-        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: #ddd; pointer-events: none; }
+        .search-input { width: 100%; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 7px 15px 7px 35px; color: #fff; font-size: 13px; outline: none; }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: #ddd; }
 
-        /* حاوية تبديل الشاشات */
-        .page-view { display: none; }
-        .page-view.active { display: block; }
-
-        /* 🎬 تصميم فيديوهات ملء الشاشة والسحب التلقائي (TikTok Feed) */
-        .tiktok-feed-container {
-            height: 100vh;
-            width: 100vw;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            background: #000;
-        }
-        .tiktok-card {
-            height: 100vh;
-            width: 100vw;
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-            position: relative;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .tiktok-card video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        /* تغذية الفيديوهات بالسحب العمودي TikTok Style */
+        .tiktok-feed { height: 100vh; width: 100vw; overflow-y: scroll; scroll-snap-type: y mandatory; }
+        .video-card { height: 100vh; width: 100vw; scroll-snap-align: start; scroll-snap-stop: always; position: relative; display: flex; align-items: center; justify-content: center; }
+        .video-card video { width: 100%; height: 100%; object-fit: cover; }
 
         /* أنيميشن القلب عند النقر المزدوج */
-        .heart-pop {
-            position: absolute;
-            font-size: 80px;
-            color: #ff2b54;
-            pointer-events: none;
-            animation: popHeart 0.8s ease-out forwards;
-            z-index: 50;
-        }
-        @keyframes popHeart {
-            0% { transform: scale(0) rotate(-15deg); opacity: 0; }
-            50% { transform: scale(1.3) rotate(0deg); opacity: 1; }
-            100% { transform: scale(1) translateY(-40px); opacity: 0; }
-        }
+        .heart-pop { position: absolute; font-size: 80px; color: #ff2b54; pointer-events: none; animation: popHeart 0.8s ease-out forwards; z-index: 50; }
+        @keyframes popHeart { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.3); opacity: 1; } 100% { transform: scale(1) translateY(-40px); opacity: 0; } }
 
-        /* الأزرار الجانبية التفاعلية فوق الفيديو */
-        .side-actions-bar {
-            position: absolute;
-            right: 12px;
-            bottom: 90px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 18px;
-            z-index: 20;
-        }
-        .action-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #fff;
-            cursor: pointer;
-            font-size: 12px;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-        }
-        .action-circle-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(0,0,0,0.45);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-bottom: 4px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: transform 0.2s, color 0.2s;
-        }
-        .action-circle-icon:active { transform: scale(0.9); }
+        /* الأزرار الجانبية */
+        .side-actions { position: absolute; right: 12px; bottom: 90px; display: flex; flex-direction: column; align-items: center; gap: 18px; z-index: 20; }
+        .action-icon { width: 48px; height: 48px; background: rgba(0,0,0,0.45); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
+        .avatar-box { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #ff2b54; background: #333; display: flex; align-items: center; justify-content: center; font-size: 24px; position: relative; cursor: pointer; }
+        .plus-btn { position: absolute; bottom: -5px; background: #ff2b54; color: #fff; border-radius: 50%; width: 20px; height: 20px; font-size: 13px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
-        .creator-avatar {
-            width: 50px; height: 50px; border-radius: 50%; border: 2px solid #ff2b54;
-            background: #333; display: flex; align-items: center; justify-content: center;
-            font-size: 26px; position: relative; cursor: pointer;
-        }
-        .plus-badge {
-            position: absolute; bottom: -5px; background: #ff2b54; color: #fff;
-            border-radius: 50%; width: 20px; height: 20px; font-size: 13px;
-            display: flex; align-items: center; justify-content: center; font-weight: bold;
-            transition: 0.2s ease; cursor: pointer;
-        }
-        .plus-badge.followed {
-            background: #20d5ec;
-            color: #000;
-        }
+        /* معلومات الفيديو السفلية */
+        .video-info { position: absolute; left: 15px; bottom: 85px; z-index: 20; max-width: 75%; text-shadow: 0 1px 4px rgba(0,0,0,0.9); }
 
-        /* تفاصيل الفيديو السفلية */
-        .video-bottom-info {
-            position: absolute;
-            left: 15px;
-            bottom: 85px;
-            z-index: 20;
-            max-width: 75%;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
-        }
-        .video-author { font-weight: bold; font-size: 16px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        .video-text { font-size: 13.5px; color: #fff; line-height: 1.4; }
-
-        /* نافذة التعليقات المنبثقة */
-        .comments-modal {
-            position: fixed; bottom: -100%; left: 0; width: 100%; height: 60vh;
-            background: #181818; border-radius: 16px 16px 0 0; z-index: 300;
-            transition: 0.3s ease-in-out; padding: 15px; display: flex; flex-direction: column;
-        }
+        /* نافذة التعليقات */
+        .comments-modal { position: fixed; bottom: -100%; left: 0; width: 100%; height: 60vh; background: #181818; border-radius: 16px 16px 0 0; z-index: 300; transition: 0.3s ease; padding: 15px; display: flex; flex-direction: column; }
         .comments-modal.active { bottom: 0; }
-        .comments-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid #222; font-size: 15px; font-weight: bold; }
-        .comments-list { flex: 1; overflow-y: auto; margin: 10px 0; display: flex; flex-direction: column; gap: 12px; }
-        .comment-item { display: flex; gap: 10px; font-size: 13px; }
-        .comment-user { font-weight: bold; color: #ff2b54; margin-bottom: 2px; }
-        .comment-input-box { display: flex; gap: 8px; }
-        .comment-input-box input { flex: 1; background: #222; border: 1px solid #333; padding: 10px 14px; border-radius: 20px; color: #fff; font-size: 13px; outline: none; }
-        .comment-input-box button { background: #ff2b54; border: none; color: #fff; padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; }
 
-        /* 👤 تصميم الملف الشخصي الأصلي المكتمل */
-        .profile-container-view { padding-bottom: 80px; }
-        .profile-info { display: flex; flex-direction: column; align-items: center; margin-top: 15px; text-align: center; }
-        
-        .avatar-container { position: relative; display: inline-block; margin-bottom: 8px; }
-        .avatar { 
-            width: 90px; height: 90px; border-radius: 50%; 
-            background: #666666; display: flex; align-items: center; justify-content: center; 
-            font-size: 40px; border: 2.5px solid #ff2b54; overflow: hidden; cursor: pointer; color: #fff;
-        }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .avatar-controls { display: flex; gap: 6px; margin-bottom: 10px; }
-        .avatar-btn { background: #222; border: 1px solid #444; color: #ccc; font-size: 11px; padding: 4px 10px; border-radius: 12px; cursor: pointer; }
-        .avatar-btn-delete { background: #331111; border: 1px solid #772222; color: #ff6666; }
-
-        .username { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; }
-        .verified { color: #20d5ec; font-size: 15px; }
-        
-        .bio { font-size: 13px; color: #bbb; margin: 6px 20px 4px 20px; line-height: 1.4; cursor: pointer; word-break: break-word; }
-        .status-presets { display: flex; gap: 8px; margin-bottom: 10px; }
-        .status-chip { background: #181818; border: 1px solid #333; color: #aaa; font-size: 11px; padding: 3px 12px; border-radius: 10px; cursor: pointer; }
-
-        .stats { display: flex; justify-content: space-around; width: 90%; margin: 15px 0; background: #181818; padding: 10px; border-radius: 12px; }
-        .stat-item { text-align: center; cursor: pointer; }
-        .stat-value { font-weight: bold; font-size: 16px; }
-        .stat-label { font-size: 11px; color: #aaa; margin-top: 2px; }
-
-        .actions { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
-        .btn-main { background: #ff2b54; border: none; color: #fff; padding: 8px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; }
-        .btn-sec { background: #222; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
-
-        .tabs { display: flex; border-top: 1px solid #222; border-bottom: 1px solid #222; }
-        .tab { flex: 1; text-align: center; padding: 11px; font-size: 13px; color: #888; cursor: pointer; border-bottom: 2px solid transparent; }
-        .tab.active { color: #fff; border-bottom-color: #ff2b54; font-weight: bold; }
-
-        .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #000; }
-        .grid-item { aspect-ratio: 9/16; background: #1a1a1a; position: relative; border: 1px solid #222; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .grid-item video { width: 100%; height: 100%; object-fit: cover; }
-        .views-count { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; font-size: 10px; z-index: 2; pointer-events: none; }
-
-        /* نافذة مشغل الفيديو العمودي المستقيم مع زر التدوير */
-        .custom-video-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 400; display: none;
-            justify-content: center; align-items: center; flex-direction: column;
-        }
-        .custom-video-modal.active { display: flex; }
-
-        .video-wrapper {
-            position: relative; width: 100%; max-width: 420px; height: 80vh;
-            display: flex; align-items: center; justify-content: center; overflow: hidden;
-        }
-        .custom-video-modal video { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s ease; }
-        
-        .modal-controls {
-            position: absolute; top: 20px; left: 20px; right: 20px;
-            display: flex; justify-content: space-between; align-items: center; z-index: 410;
-        }
-        .modal-btn {
-            background: rgba(255,255,255,0.2); border: none; color: #fff;
-            font-size: 14px; padding: 8px 16px; border-radius: 20px; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 5px; backdrop-filter: blur(5px);
-        }
-
-        .settings-modal {
-            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
-            background: #121212; z-index: 500; transition: 0.3s ease-in-out; padding: 20px; overflow-y: auto;
-        }
-        .settings-modal.active { right: 0; }
-        .settings-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; padding-bottom: 15px; margin-bottom: 20px; font-size: 17px; font-weight: bold; }
-        .setting-section { margin-bottom: 22px; }
-        .setting-title { font-size: 13px; color: #ff2b54; margin-bottom: 8px; font-weight: bold; text-transform: uppercase; }
-        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px; cursor: pointer; color: #ddd; }
-
-        .camera-modal {
-            position: fixed; bottom: -100%; left: 0; width: 100%; height: 85vh;
-            background: #181818; border-radius: 20px 20px 0 0; z-index: 500;
-            transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; align-items: center;
-        }
-        .camera-modal.active { bottom: 0; }
-        .camera-preview { width: 100%; height: 60vh; background: #000; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; border: 1px solid #333; }
-        .capture-btn { width: 70px; height: 70px; border-radius: 50%; background: #ff2b54; border: 4px solid #fff; margin-top: 20px; cursor: pointer; }
-
-        /* شريط التنقل السفلي المتكامل */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 65px;
-            background: rgba(15,15,15,0.95); border-top: 1px solid #222; display: flex;
-            justify-content: space-around; align-items: center; z-index: 250; backdrop-filter: blur(8px);
-        }
-        .nav-item { background: none; border: none; color: #777; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; text-decoration: none; }
+        /* شريط التنقل السفلي */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: rgba(15,15,15,0.95); border-top: 1px solid #222; display: flex; justify-content: space-around; align-items: center; z-index: 200; }
+        .nav-item { background: none; border: none; color: #777; font-size: 11px; display: flex; flex-direction: column; align-items: center; cursor: pointer; text-decoration: none; }
         .nav-item.active { color: #fff; }
-        .nav-item span:first-child { font-size: 22px; }
-        .nav-add-btn { background: #ff2b54; color: #fff; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر العلوي مع شريط البحث والملاحة -->
-    <div class="main-header" id="mainHeader">
-        <button class="back-btn" onclick="openProfilePage()">👤</button>
+    <div class="main-header">
+        <a href="profile.html" class="nav-item" style="font-size:20px;">👤</a>
         <div class="search-container">
-            <input type="text" class="search-input" placeholder="بحث عن مستخدمين، فيديوهات..." oninput="handleSearch(this.value)">
+            <input type="text" class="search-input" placeholder="بحث عن مستخدمين وفيديوهات...">
             <span class="search-icon">🔍</span>
-        </div>
-        <div style="display: flex; gap: 10px;">
-            <button class="settings-btn" onclick="openSettings()">⚙️</button>
         </div>
     </div>
 
-    <!-- 1. الشاشة الرئيسية لجميع الفيديوهات بملء الشاشة مع السحب العمودي (TikTok Fullscreen Feed) -->
-    <div class="page-view active" id="homeFeedView">
-        <div class="tiktok-feed-container">
-            
-            <!-- فيديو 1 -->
-            <div class="tiktok-card" onclick="handleVideoClick(event, this)">
-                <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop autoplay playsinline></video>
-                
-                <!-- الأزرار الجانبية التفاعلية فوق الفيديو -->
-                
+    <div class="tiktok-feed">
+        <!-- فيديو 1 -->
+        <div class="video-card" onclick="handleVideoClick(event, this)">
+            <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop autoplay playsinline></video>
+            <div class="side-actions">
+                <div class="avatar-box" onclick="event.stopPropagation(); location.href='profile.html'">
+                    👤 <div class="plus-btn" onclick="event.stopPropagation(); followCreator(this)">+</div>
+                </div>
+                <div class="action-icon" onclick="event.stopPropagation(); toggleLike(this)">❤️</div>
+                <div class="action-icon" onclick="event.stopPropagation(); openComments()">💬</div>
+                <div class="action-icon" onclick="event.stopPropagation(); alert('تم نسخ رابط الفيديو 🔗')">🔗</div>
+            </div>
+            <div class="video-info">
+                <h3>@المستخدم_الأول ✓</h3>
+                <p>فيديو مميز بتصوير عالي الجودة 🚀</p>
+            </div>
+        </div>
+
+        <!-- فيديو 2 (سحب للأعلى والأسفل) -->
+        <div class="video-card" onclick="handleVideoClick(event, this)">
+            <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" loop playsinline></video>
+            <div class="side-actions">
+                <div class="avatar-box" onclick="event.stopPropagation(); location.href='profile.html'">
+                    🌸 <div class="plus-btn" onclick="event.stopPropagation(); followCreator(this)">+</div>
+                </div>
+                <div class="action-icon" onclick="event.stopPropagation(); toggleLike(this)">❤️</div>
+                <div class="action-icon" onclick="event.stopPropagation(); openComments()">💬</div>
+                <div class="action-icon" onclick="event.stopPropagation(); alert('تم نسخ رابط الفيديو 🔗')">🔗</div>
+            </div>
+            <div class="video-info">
+                <h3>@صانع_المحتوى 🌿</h3>
+                <p>جمال الطبيعة والزهور 🌸</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة التعليقات -->
+    <div class="comments-modal" id="commentsModal">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <b>التعليقات</b>
+            <button onclick="closeComments()" style="background:none; border:none; color:#fff; font-size:18px;">✕</button>
+        </div>
+        <div style="flex:1; overflow-y:auto;" id="commentsList">
+            <p><b>@محمد:</b> فيديو رائع جداً! 🔥</p>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <input type="text" id="commentInp" style="flex:1; padding:8px; border-radius:15px; border:none;" placeholder="اكتب تعليقاً...">
+            <button onclick="addComment()" style="background:#ff2b54; border:none; color:#fff; padding:8px 15px; border-radius:15px;">نشر</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item active"><span>🏠</span><span>الرئيسية</span></a>
+        <a href="profile.html" class="nav-item"><span>👤</span><span>الملف</span></a>
+    </div>
+
+    <script>
+        let clickTimer = null;
+        function handleVideoClick(event, card) {
+            const video = card.querySelector('video');
+            if (clickTimer == null) {
+                clickTimer = setTimeout(() => {
+                    clickTimer = null;
+                    if (video.paused) video.play(); else video.pause();
+                }, 300);
+            } else {
+                clearTimeout(clickTimer); clickTimer = null;
+                // نقر مزدوج = قلب إعجاب
+                const heart = document.createElement('div');
+                heart.className = 'heart-pop'; heart.innerText = '❤️';
+                heart.style.left = (event.clientX - 40) + 'px';
+                heart.style.top = (event.clientY - 40) + 'px';
+                card.appendChild(heart);
+                setTimeout(() => heart.remove(), 800);
+            }
+        }
+
+        function followCreator(btn) {
+            btn.innerText = (btn.innerText === "+") ? "✓" : "+";
+            btn.style.background = (btn.innerText === "✓") ? "#20d5ec" : "#ff2b54";
+        }
+
+        function toggleLike(btn) {
+            btn.style.color = (btn.style.color === 'red') ? '#fff' : 'red';
+        }
+
+        function openComments() { document.getElementById('commentsModal').classList.add('active'); }
+        function closeComments() { document.getElementById('commentsModal').classList.remove('active'); }
+        function addComment() {
+            const inp = document.getElementById('commentInp');
+            if(inp.value.trim()){
+                document.getElementById('commentsList').innerHTML += `<p style="margin-top:5px;"><b>@أنت:</b> ${inp.value}</p>`;
+                inp.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
