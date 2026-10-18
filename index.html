@@ -49,6 +49,21 @@
             object-fit: cover;
         }
 
+        /* أنيميشن القلب عند النقر المزدوج */
+        .heart-pop {
+            position: absolute;
+            font-size: 85px;
+            color: #ff2b54;
+            pointer-events: none;
+            animation: popHeart 0.8s ease-out forwards;
+            z-index: 50;
+        }
+        @keyframes popHeart {
+            0% { transform: scale(0) rotate(-15deg); opacity: 0; }
+            50% { transform: scale(1.3) rotate(0deg); opacity: 1; }
+            100% { transform: scale(1) translateY(-40px); opacity: 0; }
+        }
+
         /* الأزرار الجانبية التفاعلية فوق الفيديو */
         .side-actions-bar {
             position: absolute;
@@ -94,6 +109,11 @@
             position: absolute; bottom: -5px; background: #ff2b54; color: #fff;
             border-radius: 50%; width: 18px; height: 18px; font-size: 12px;
             display: flex; align-items: center; justify-content: center; font-weight: bold;
+            cursor: pointer;
+        }
+        .plus-badge.followed {
+            background: #20d5ec;
+            color: #000;
         }
 
         /* تفاصيل الفيديو السفلية */
@@ -237,24 +257,26 @@
     <div class="page-view active" id="homeFeedView">
         <div class="tiktok-feed-container">
             
-            <!-- فيديو 1 -->
-            <div class="tiktok-card">
-                <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop autoplay playsinline onclick="togglePlay(this)"></video>
+            <!-- فيديو 1 مع خاصية النقر المزدوج للإعجاب -->
+            <div class="tiktok-card" onclick="handleVideoClick(event, this)">
+                <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop autoplay playsinline></video>
                 
                 <!-- الأزرار الجانبية التفاعلية فوق الفيديو -->
                 <div class="side-actions-bar">
-                    <div class="creator-avatar" onclick="openProfilePage()" title="الانتقال لبروفايل المستخدم">
-                        👤 <div class="plus-badge">+</div>
+                    <div class="creator-avatar" onclick="event.stopPropagation(); openProfilePage()" title="الانتقال لبروفايل المستخدم">
+                        👤 
+                        <!-- زر المتابعة بعلامة الزائد (متوافق مع طلبك) -->
+                        <div class="plus-badge" onclick="event.stopPropagation(); toggleFollowCreator(this)">+</div>
                     </div>
-                    <div class="action-box" onclick="toggleLike(this)">
+                    <div class="action-box" onclick="event.stopPropagation(); toggleLike(this)">
                         <div class="action-circle-icon">❤️</div>
                         <span class="like-counter">14.2K</span>
                     </div>
-                    <div class="action-box" onclick="openComments()">
+                    <div class="action-box" onclick="event.stopPropagation(); openComments()">
                         <div class="action-circle-icon">💬</div>
                         <span>852</span>
                     </div>
-                    <div class="action-box" onclick="shareVideo()">
+                    <div class="action-box" onclick="event.stopPropagation(); shareVideo()">
                         <div class="action-circle-icon">🔗</div>
                         <span>مشاركة</span>
                     </div>
@@ -267,23 +289,24 @@
                 </div>
             </div>
 
-            <!-- فيديو 2 (يمكنك السحب للأعلى والأسفل) -->
-            <div class="tiktok-card">
-                <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" loop playsinline onclick="togglePlay(this)"></video>
+            <!-- فيديو 2 مع خاصية النقر المزدوج للإعجاب -->
+            <div class="tiktok-card" onclick="handleVideoClick(event, this)">
+                <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" loop playsinline></video>
                 
                 <div class="side-actions-bar">
-                    <div class="creator-avatar" onclick="openProfilePage()">
-                        🌸 <div class="plus-badge">+</div>
+                    <div class="creator-avatar" onclick="event.stopPropagation(); openProfilePage()">
+                        🌸 
+                        <div class="plus-badge" onclick="event.stopPropagation(); toggleFollowCreator(this)">+</div>
                     </div>
-                    <div class="action-box" onclick="toggleLike(this)">
+                    <div class="action-box" onclick="event.stopPropagation(); toggleLike(this)">
                         <div class="action-circle-icon">❤️</div>
                         <span class="like-counter">38.9K</span>
                     </div>
-                    <div class="action-box" onclick="openComments()">
+                    <div class="action-box" onclick="event.stopPropagation(); openComments()">
                         <div class="action-circle-icon">💬</div>
                         <span>1.4K</span>
                     </div>
-                    <div class="action-box" onclick="shareVideo()">
+                    <div class="action-box" onclick="event.stopPropagation(); shareVideo()">
                         <div class="action-circle-icon">🔗</div>
                         <span>مشاركة</span>
                     </div>
@@ -298,7 +321,7 @@
         </div>
     </div>
 
-    <!-- 2. صفحة الملف الشخصي المستقلة بكامل ميزاتها الأولية دون حذف -->
+    <!-- 2. صفحة الملف الشخصي المستقلة بكامل ميزاتها الأصلية دون حذف -->
     <div class="page-view" id="profileView">
         <div class="profile-container-view">
             <div class="header" style="position: relative; background: #0f0f0f;">
@@ -497,16 +520,66 @@
             window.scrollTo(0, 0);
         }
 
-        // تشغيل وإيقاف الفيديو عند النقر
-        function togglePlay(video) {
-            if (video.paused) {
-                video.play();
+        /* --- النظام المضاف: النقر المزدوج (Double Tap) للإعجاب وتشغيل/إيقاف الفيديو --- */
+        let clickTimer = null;
+
+        function handleVideoClick(event, cardElem) {
+            const video = cardElem.querySelector('video');
+
+            if (clickTimer == null) {
+                clickTimer = setTimeout(() => {
+                    clickTimer = null;
+                    if (video.paused) {
+                        video.play();
+                    } else {
+                        video.pause();
+                    }
+                }, 300);
             } else {
-                video.pause();
+                clearTimeout(clickTimer);
+                clickTimer = null;
+
+                // نقرة مزدوجة: إنشاء انيميشن القلب وتلوين زر الإعجاب
+                createPopHeart(event, cardElem);
+                const actionIcon = cardElem.querySelector('.action-circle-icon');
+                if (actionIcon) {
+                    actionIcon.style.color = 'red';
+                }
             }
         }
 
-        // زر الإعجاب والتفاعل
+        function createPopHeart(event, cardElem) {
+            const heart = document.createElement('div');
+            heart.className = 'heart-pop';
+            heart.innerHTML = '❤️';
+
+            const rect = cardElem.getBoundingClientRect();
+            const x = event.clientX - rect.left - 42;
+            const y = event.clientY - rect.top - 42;
+
+            heart.style.left = `${x}px`;
+            heart.style.top = `${y}px`;
+
+            cardElem.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 800);
+        }
+
+        /* --- النظام المضاف: متابعة صانع المحتوى عبر زر الزائد (+) --- */
+        function toggleFollowCreator(badgeElem) {
+            if (badgeElem.innerText === "+") {
+                badgeElem.innerText = "✓";
+                badgeElem.classList.add('followed');
+                alert('تمت متابعة صاحب الفيديو بنجاح! 👤✨');
+            } else {
+                badgeElem.innerText = "+";
+                badgeElem.classList.remove('followed');
+            }
+        }
+
+        // زر الإعجاب والتفاعل التقليدي
         function toggleLike(elem) {
             const icon = elem.querySelector('.action-circle-icon');
             if (icon.style.color === 'red') {
@@ -680,4 +753,3 @@
     </script>
 </body>
 </html>
- هذا هو الكود قلنا اضف ميزه النقر مرتين للاعجاب بدون ماتحذف اي ميزه سابقا
