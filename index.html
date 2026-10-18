@@ -49,7 +49,7 @@
         .tab { flex: 1; text-align: center; padding: 11px; font-size: 13px; color: #888; cursor: pointer; border-bottom: 2px solid transparent; }
         .tab.active { color: #fff; border-bottom-color: #ff2b54; font-weight: bold; }
 
-        /* شبكة الفيديوهات لتعمل وتظهر الفيديوهات بداخلها بوضوح */
+        /* شبكة الفيديوهات الخاصة بالمستخدم فقط داخل بروفايله */
         .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #000; }
         .grid-item { aspect-ratio: 9/16; background: #1a1a1a; position: relative; border: 1px solid #222; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .grid-item video { width: 100%; height: 100%; object-fit: cover; }
@@ -127,8 +127,8 @@
 <body>
 
     <div class="header">
-        <!-- تم تعديل زر العودة للخروج المباشر والرجوع لفيديوهات المستخدمين -->
-        <button class="back-btn" onclick="goBackToFeed()">➔</button>
+        <!-- زر خروج مباشر ينقلك فوراً إلى الصفحة الرئيسية لجميع المستخدمين index.html -->
+        <button class="back-btn" onclick="goToMainFeed()">➔</button>
         <span>الملف الشخصي</span>
         <div style="display: flex; gap: 12px;">
             <button class="share-btn" onclick="alert('تم نسخ رابط بروفايلك بنجاح 🔗')">🔗</button>
@@ -181,74 +181,4 @@
 
     <div class="tabs">
         <div class="tab active">الفيديوهات (3)</div>
-        <div class="tab" onclick="alert('الفيديوهات المعجب بها فارغة حالياً')">المعجب بها ❤️</div>
-        <div class="tab" onclick="alert('سجل المشاهدات فارغ')">المشاهدات 👁️</div>
-    </div>
-
-    <!-- شبكة الفيديوهات المحدثة لتشغيل الفيديوهات بداخلها -->
-    <div class="video-grid">
-        <div class="grid-item">
-            <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
-            <div class="views-count">👁️ 1.2K</div>
-        </div>
-        <div class="grid-item">
-            <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
-            <div class="views-count">👁️ 3.4K</div>
-        </div>
-        <div class="grid-item">
-            <video src="https://www.w3schools.com/html/mov_bbb.mp4" muted loop autoplay playsinline onclick="openCustomModal(this.src)"></video>
-            <div class="views-count">👁️ 850</div>
-        </div>
-    </div>
-
-    <!-- نافذة عرض الفيديو العمودي المستقيم مع أزرار التحكم والتدوير -->
-    <div class="custom-video-modal" id="customVideoModal">
-        <div class="modal-controls">
-            <button class="modal-btn" onclick="rotateVideo()">🔄 تدوير</button>
-            <button class="modal-btn" onclick="closeCustomModal()">✕ إغلاق</button>
-        </div>
-        <div class="video-wrapper">
-            <video id="modalVideoPlayer" controls autoplay playsinline></video>
-        </div>
-    </div>
-
-    <!-- نافذة الإعدادات الشاملة -->
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-header">
-            <span>الإعدادات والخصوصية</span>
-            <button onclick="closeSettings()" style="background:none; border:none; color:#fff; font-size:22px;">✕</button>
-        </div>
-
-        <div class="setting-section">
-            <div class="setting-title">إدارة الحساب والربط</div>
-            <div class="setting-item" onclick="prompt('أدخل رقم الهاتف للربط:')">📱 ربط رقم الهاتف</div>
-            <div class="setting-item" onclick="prompt('أدخل البريد الإلكتروني:')">📧 ربط البريد الإلكتروني</div>
-            <div class="setting-item" onclick="alert('تم الربط بحساب جوجل بنجاح ✅')">🌐 ربط حساب Google</div>
-        </div>
-
-        <div class="setting-section">
-            <div class="setting-title">الخصوصية والأمان</div>
-            <div class="setting-item" onclick="alert('تم تغيير خصوصية الحساب إلى (خاص 🔒)')">🔒 خصوصية الحساب (عام / خاص)</div>
-            <div class="setting-item" onclick="alert('وضع تقييد المحتوى والمراهقين مفعل ⏳')">⏳ وضع تقييد المحتوى ووقت الشاشة</div>
-            <div class="setting-item" onclick="alert('تم حظر الحسابات المحددة بنجاح')">🚫 قائمة الحظر والحسابات المحظورة</div>
-            <div class="setting-item" onclick="alert('تم إرسال طلب البلاغ بنجاح للإدارة')">⚠️ الإبلاغ عن مشكلة</div>
-        </div>
-
-        <div class="setting-section">
-            <div class="setting-title">التحقق والأرباح</div>
-            <div class="setting-item" onclick="alert('حالة التحقق: موثق بالعلامة الزرقاء ✓')">🛡️ التحقق من الهوية (العلامة الزرقاء)</div>
-            <div class="setting-item" onclick="alert('صندوق المبدعين والأرباح نشط 💰')">💰 صندوق المبدعين والربح (Creator Fund)</div>
-        </div>
-    </div>
-
-    <!-- نافذة الكاميرا ونشر الحالة/الفيديو -->
-    <div class="camera-modal" id="cameraModal">
-        <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px;">
-            <span style="font-weight: bold; font-size: 16px;">تصوير ونشر حالة أو فيديو 🎥</span>
-            <button onclick="closeCamera()" style="background:none; border:none; color:#fff; font-size:20px;">✕</button>
-        </div>
-        <div class="camera-preview">
-            <span style="color: #777; font-size: 14px;">الكاميرا جاهزة للتصوير أو الرفع من الاستوديو 📱</span>
-        </div>
-        <button class="capture-btn" onclick="alert('تم بدء تسجيل وتصوير الفيديو بنجاح! 🚀')"></button>
-    
+        <div class="tab" onclick="alert('الفيديوهات المعجب بها فارغة حالياً')">المعجب بها
